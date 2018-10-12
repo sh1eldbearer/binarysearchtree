@@ -30,7 +30,11 @@ public:
 	template<typename Type>
 	BSNode<Type>* CreateNode(Type nodeValue)	// Creates a new node in the tree
 	{
+		// Creates a new node
+		BSNode<Type>* newNode = new BSNode<Type>(nodeValue);
 
+		// Returns a pointer to the new node
+		return newNode;
 	}
 
 	template<typename Type>
