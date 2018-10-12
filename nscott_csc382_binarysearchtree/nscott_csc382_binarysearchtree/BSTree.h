@@ -18,13 +18,13 @@ public:
 
 	BSNode<Type>* GetRootPtr()		// Returns the memory address of the root node
 	{
-
+		return rootPtr;
 	}
 
 	template<typename Type>
 	void SetRootPtr(Type* newPtr)		// Changes which node is the tree's root node
 	{
-
+		rootPtr = newPtr;
 	}
 
 	template<typename Type>
