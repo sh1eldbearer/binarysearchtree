@@ -17,29 +17,29 @@ public:
 	template<typename Type>
 	void SetValue(Type newValue)	// Changes the value stored in this node
 	{
-
+		value = newValue;
 	}
 
 	BSNode<Type>* GetLeftChildPtr()		// Returns the memory address of this node's left child
 	{
-
+		return leftChildPtr;
 	}
 
 	template<typename Type>
 	void SetLeftChildPtr(Type* newPtr)		// Changes which node is this node's left child
 	{
-
+		leftChildPtr = newPtr;
 	}
 
 	BSNode<Type>* GetRightChildPtr()	// Returns the memory address of this node's right child
 	{
-
+		return rightChildPtr;
 	}
 
 	template<typename Type>
 	void SetRightChildPtr(Type* newPtr)		// Changes which node is this node's left child
 	{
-
+		rightChildPtr = newPtr;
 	}
 };
 
