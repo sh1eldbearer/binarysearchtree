@@ -3,4 +3,13 @@
 
 /*																								  */
 
+template<typename Type>
+class BSNode
+{
+private:
+
+public:
+
+};
+
 #endif

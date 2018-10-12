@@ -7,4 +7,13 @@
 
 #include "BSNode.h"
 
+template<typename Type>
+class BSTree
+{
+private:
+
+public:
+
+};
+
 #endif
