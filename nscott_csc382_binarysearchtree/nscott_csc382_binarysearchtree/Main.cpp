@@ -12,13 +12,14 @@ int main()
 	BSTree<double> theBST;
 	bool(runProgram) = true;
 	int menuInput;
-	double userInput;
+	double userInput, userInput2;
 
 	while (runProgram)
 	{
 		std::cout << " 1. Add a new node" << std::endl;
 		std::cout << " 2. Find a value stored in the tree" << std::endl;
 		std::cout << " 3. Delete a node from the tree" << std::endl;
+		std::cout << " 4. Swap two node values" << std::endl;
 		std::cout << "66. Display tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
 		std::cout << std::endl;
@@ -40,6 +41,17 @@ int main()
 				if (GetUserInput(&userInput))
 				{
 					theBST.FindNode(userInput, true);
+				}
+				break;
+			case 4:
+				std::cout << "Enter the first value to swap: ";
+				if (GetUserInput(&userInput))
+				{
+					std::cout << "Enter the second value to swap: ";
+					if (GetUserInput(&userInput2))
+					{
+						theBST.SwapValues(userInput, userInput2);
+					}
 				}
 				break;
 			case 66:

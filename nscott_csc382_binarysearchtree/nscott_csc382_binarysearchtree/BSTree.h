@@ -71,6 +71,25 @@ public:
 	}
 
 	template<typename Type>
+	void SwapValues(Type value1, Type value2)		// Swaps the position of two values
+	{
+		BSNode<Type>* tempNode1 = FindNode(value1, false);
+		BSNode<Type>* tempNode2 = FindNode(value2, false);
+		
+		// TODO: Test for valid switch before switching
+		if (tempNode1 != nullptr && tempNode2 != nullptr)
+		{
+			tempNode1->SetValue(tempNode1->GetValue() + tempNode2->GetValue());
+			tempNode2->SetValue(tempNode1->GetValue() - tempNode2->GetValue());
+			tempNode1->SetValue(tempNode1->GetValue() - tempNode2->GetValue());
+		}
+		else
+		{
+			std::cout << "One or more values were not found in the tree. Please try again." << std::endl;
+		}
+	}
+
+	template<typename Type>
 	BSNode<Type>* FindNode(Type findValue, bool verbose)	// Attempts to find a node containing the given value
 	{
 		// If there are no nodes in the tree, returns nullptr and displays and error message
