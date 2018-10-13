@@ -13,7 +13,12 @@ private:
 public:
 	BSNode(Type initValue = NULL) : value(initValue) { }		// Constructor
 	~BSNode();													// Destructor
-	
+
+	Type GetValue()		// Returns the value stored in this node
+	{
+		return value;
+	}
+
 	template<typename Type>
 	void SetValue(Type newValue)	// Changes the value stored in this node
 	{

@@ -17,6 +17,8 @@ int main()
 	while (runProgram)
 	{
 		std::cout << " 1. Add a new node" << std::endl;
+		std::cout << " 2. Find a value stored in the tree" << std::endl;
+		std::cout << " 3. Delete a node from the tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
 		std::cout << std::endl;
 
@@ -30,6 +32,13 @@ int main()
 				if (GetUserInput(&userInput))
 				{
 					theBST.CreateNode(userInput);
+				}
+				break;
+			case 2:
+				std::cout << "Enter the value you want to find: ";
+				if (GetUserInput(&userInput))
+				{
+					theBST.FindNode(userInput, true);
 				}
 				break;
 			case 99:	// Exit program
