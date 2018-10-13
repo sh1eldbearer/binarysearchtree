@@ -12,6 +12,7 @@ class BSTree
 {
 private:
 	BSNode<Type>* rootPtr = nullptr;		// Pointer to the rootPtr node of this tree
+	int nodeCount = 0;			// Counter for how many nodes are currently in the tree 
 public:
 	BSTree() {}		// Constructor
 	~BSTree() {}	// Destructor
@@ -27,11 +28,36 @@ public:
 		rootPtr = newPtr;
 	}
 
+	int GetNodecount()		// Returns the current count of nodes in the tree
+	{
+		return nodeCount;
+	}
+
+	void IncreaseNodeCount()	// Increases the count of nodes in the tree
+	{
+		nodeCount++;
+	}
+
+	void DecreaseNodeCount()	// Decreases the count of nodes in the tree
+	{
+		nodeCount--;
+	}
+
 	template<typename Type>
 	BSNode<Type>* CreateNode(Type nodeValue)	// Creates a new node in the tree
 	{
+		// Attempts to see if there is already a node containing this value in the tree
+		if (!IsTreeEmpty())		// Must check for an empty tree first to supress FindNode's error message
+		{
+			if (FindNode(nodeValue, false) != nullptr)
+			{
+				std::cout << "This value already exists in the tree." << std::endl;
+			}
+		}
+
 		// Creates a new node
 		BSNode<Type>* newNode = new BSNode<Type>(nodeValue);
+		IncreaseNodeCount();
 
 		// If there are no other nodes in the tree, sets this node as the root node
 		if (rootPtr == nullptr)
@@ -47,7 +73,7 @@ public:
 	BSNode<Type>* FindNode(Type findValue, bool verbose)	// Attempts to find a node containing the given value
 	{
 		// If there are no nodes in the tree, returns nullptr and displays and error message
-		if (rootPtr == nullptr)
+		if (IsTreeEmpty())
 		{
 			std::cout << "There are no nodes in the tree." << std::endl;
 			return nullptr;
@@ -89,10 +115,12 @@ public:
 		if (verbose)
 		{
 			std::cout << "Value \"" << findValue << "\" ";
+			// No match was found
 			if (currentNode == nullptr)
 			{
 				std::cout << "not found in the tree." << std::endl;
 			}
+			// A match was found
 			else
 			{
 				std::cout << "found at address " << currentNode << "." << std::endl;
@@ -110,6 +138,29 @@ public:
 	Type MaxValue()		// Finds the largest value stored in the tree
 	{
 
+	}
+
+	bool IsTreeEmpty()		// Tests to see if the tree is empty
+	{
+		// Tree is really and truly empty
+		if (rootPtr == nullptr && nodeCount == 0)
+		{
+			return true;
+		}
+		// TODO: Delete this when you're sure everything works right!
+		// Tree thinks it might be empty, but I didn't adjust the count properly somewhere
+		else if ((rootPtr == nullptr && nodeCount != 0) ||
+			(rootPtr != nullptr && nodeCount == 0))
+		{
+			std::cout << "The root pointer and node count variables don't match up." << 
+				" Not sure what happened, so here's a TRUE." << std::endl;
+			std::cout << "Root address: " << rootPtr << "; Node count: " << nodeCount << std::endl;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 };
 
