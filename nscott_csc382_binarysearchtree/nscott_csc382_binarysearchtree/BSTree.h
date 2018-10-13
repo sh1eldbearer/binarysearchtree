@@ -7,6 +7,9 @@
 
 #include "BSNode.h"
 
+// TODO: Delete before submitting
+int COUNT = 10;
+
 template<typename Type>
 class BSTree
 {
@@ -44,7 +47,7 @@ public:
 	}
 
 	template<typename Type>
-	BSNode<Type>* CreateNode(Type nodeValue)	// Creates a new node in the tree
+	void CreateNode(Type nodeValue)	// Creates a new node in the tree
 	{
 		// Attempts to see if there is already a node containing this value in the tree
 		if (!IsTreeEmpty())		// Must check for an empty tree first to supress FindNode's error message
@@ -56,17 +59,15 @@ public:
 		}
 
 		// Creates a new node
-		BSNode<Type>* newNode = new BSNode<Type>(nodeValue);
-		IncreaseNodeCount();
-
-		// If there are no other nodes in the tree, sets this node as the root node
 		if (rootPtr == nullptr)
 		{
-			rootPtr = newNode;
+			rootPtr = rootPtr->InsertNode(rootPtr, nodeValue);
 		}
-
-		// Returns a pointer to the new node
-		return newNode;
+		else
+		{
+			rootPtr->InsertNode(rootPtr, nodeValue);
+		}
+		IncreaseNodeCount();
 	}
 
 	template<typename Type>
@@ -161,6 +162,44 @@ public:
 		{
 			return false;
 		}
+	}
+
+	// TODO: Delete before submission
+	// Function to print binary tree in 2D 
+	// It does reverse inorder traversal 
+	void print2DUtil(BSNode<Type> *node, int space)
+	{
+		// Base case 
+		if (node == NULL)
+		{
+			return;
+		}
+
+		// Increase distance between levels 
+		space += COUNT;
+
+		// Process right child first 
+		print2DUtil(node->GetRightChildPtr(), space);
+
+		// Print current node after space 
+		// count 
+		std::cout << "\n";
+		for (int i = COUNT; i < space; i++)
+		{
+			std::cout << " ";
+		}
+		std::cout << node->GetValue() << std::endl;
+
+		// Process left child 
+		print2DUtil(node->GetLeftChildPtr(), space);
+	}
+
+	// TODO: Delete before submission
+	// Wrapper over print2DUtil() 
+	void print2D()
+	{
+		// Pass initial space count as 0 
+		print2DUtil(rootPtr, 0);
 	}
 };
 
