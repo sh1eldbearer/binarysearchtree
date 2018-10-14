@@ -55,6 +55,7 @@ public:
 			if (FindNode(nodeValue, false) != nullptr)
 			{
 				std::cout << "This value already exists in the tree." << std::endl;
+				return;
 			}
 		}
 
