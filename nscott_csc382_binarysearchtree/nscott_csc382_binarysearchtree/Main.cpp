@@ -55,7 +55,7 @@ int main()
 				}
 				break;
 			case 66:
-				theBST.print2D();
+				theBST.PrintTree();
 				break;
 			case 99:	// Exit program
 				runProgram = false;

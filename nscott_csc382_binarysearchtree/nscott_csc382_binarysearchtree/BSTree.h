@@ -7,15 +7,39 @@
 
 #include "BSNode.h"
 
-// TODO: Delete before submitting
-int COUNT = 10;
-
 template<typename Type>
 class BSTree
 {
 private:
 	BSNode<Type>* rootPtr = nullptr;		// Pointer to the rootPtr node of this tree
 	int nodeCount = 0;			// Counter for how many nodes are currently in the tree 
+	int spaceCount = 5;	// The number of spaces to add between each level of the tree when counting
+
+	void PrintNode(BSNode<Type> *node, int space)	// Prints the contents of a node to the console
+	{
+		// If the current node is null, don't print anything
+		if (node == NULL)
+		{
+			return;
+		}
+
+		// Increase distance between levels for visual formatting
+		space += spaceCount;
+
+		// Attempts to print the right child first 
+		PrintNode(node->GetRightChildPtr(), space);
+
+		// Prints the current node 
+		std::cout << std::endl;
+		for (int i = spaceCount; i < space; i++)
+		{
+			std::cout << " ";
+		}
+		std::cout << node->GetValue() << std::endl;
+
+		// Attempts to print the left child first 
+		PrintNode(node->GetLeftChildPtr(), space);
+	}
 public:
 	BSTree() {}		// Constructor
 	~BSTree() {}	// Destructor
@@ -168,14 +192,15 @@ public:
 		{
 			return true;
 		}
-		// TODO: Delete this when you're sure everything works right!
+		// TODO: Delete this when I'm absolutely sure everything works right!
 		// Tree thinks it might be empty, but I didn't adjust the count properly somewhere
 		else if ((rootPtr == nullptr && nodeCount != 0) ||
 			(rootPtr != nullptr && nodeCount == 0))
 		{
-			std::cout << "The root pointer and node count variables don't match up." << 
-				" Not sure what happened, so here's a TRUE." << std::endl;
-			std::cout << "Root address: " << rootPtr << "; Node count: " << nodeCount << std::endl;
+			std::cout << "The root pointer and node count variables don't match up." <<
+				" Not sure what happened, so here's a false TRUE value." << std::endl <<
+				"Go fix your code, goofball!" << std::endl << 
+				"Root address: " << rootPtr << "; Node count: " << nodeCount << std::endl;
 			return true;
 		}
 		else
@@ -183,43 +208,9 @@ public:
 			return false;
 		}
 	}
-
-	// TODO: Delete before submission
-	// Function to print binary tree in 2D 
-	// It does reverse inorder traversal 
-	void print2DUtil(BSNode<Type> *node, int space)
-	{
-		// Base case 
-		if (node == NULL)
-		{
-			return;
-		}
-
-		// Increase distance between levels 
-		space += COUNT;
-
-		// Process right child first 
-		print2DUtil(node->GetRightChildPtr(), space);
-
-		// Print current node after space 
-		// count 
-		std::cout << "\n";
-		for (int i = COUNT; i < space; i++)
-		{
-			std::cout << " ";
-		}
-		std::cout << node->GetValue() << std::endl;
-
-		// Process left child 
-		print2DUtil(node->GetLeftChildPtr(), space);
-	}
-
-	// TODO: Delete before submission
-	// Wrapper over print2DUtil() 
-	void print2D()
-	{
-		// Pass initial space count as 0 
-		print2DUtil(rootPtr, 0);
+	void PrintTree() // Prints the tree to the console (right branches are on top)
+	{ 
+		PrintNode(rootPtr, 0);
 	}
 };
 
