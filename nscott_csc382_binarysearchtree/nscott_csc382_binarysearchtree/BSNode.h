@@ -46,30 +46,6 @@ public:
 	{
 		rightChildPtr = newPtr;
 	}
-
-	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue)		// Inserts a new node 
-	{
-		// If the node being checked is null, creates a new node to occpy that spot on the tree
-		if (nodeToCheck == nullptr)
-		{
-			BSNode<Type>* newNode = new BSNode<Type>(newValue);
-			return newNode;
-		}
-
-		// Otherwise, looks at the current node's value to determine which branch to traverse next
-		if (newValue < nodeToCheck->GetValue())
-		{
-			// Move down the tree along the left branch (runs recursively until an avaiable node is found)
-			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue));
-		}
-		else if (newValue > nodeToCheck->GetValue())
-		{
-			// Move down the tree along the right branch (runs recursively until an avaiable node is found)
-			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue));
-		}
-
-		return nodeToCheck;
-	}
 };
 
 #endif

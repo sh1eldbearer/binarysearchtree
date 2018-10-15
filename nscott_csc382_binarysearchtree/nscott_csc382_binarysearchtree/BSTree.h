@@ -15,6 +15,30 @@ private:
 	int nodeCount = 0;			// Counter for how many nodes are currently in the tree 
 	int spaceCount = 5;	// The number of spaces to add between each level of the tree when counting
 
+	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue)		// Inserts a new node 
+	{
+		// If the node being checked is null, creates a new node to occpy that spot on the tree
+		if (nodeToCheck == nullptr)
+		{
+			BSNode<Type>* newNode = new BSNode<Type>(newValue);
+			return newNode;
+		}
+
+		// Otherwise, looks at the current node's value to determine which branch to traverse next
+		if (newValue < nodeToCheck->GetValue())
+		{
+			// Move down the tree along the left branch (runs recursively until an avaiable node is found)
+			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue));
+		}
+		else if (newValue > nodeToCheck->GetValue())
+		{
+			// Move down the tree along the right branch (runs recursively until an avaiable node is found)
+			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue));
+		}
+
+		return nodeToCheck;
+	}
+
 	void PrintNode(BSNode<Type> *node, int space)	// Prints the contents of a node to the console
 	{
 		// If the current node is null, don't print anything
@@ -74,23 +98,20 @@ public:
 	void CreateNode(Type nodeValue)	// Creates a new node in the tree
 	{
 		// Attempts to see if there is already a node containing this value in the tree
-		if (!IsTreeEmpty())		// Must check for an empty tree first to supress FindNode's error message
+		if (FindValue(nodeValue, false) != nullptr)
 		{
-			if (FindNode(nodeValue, false) != nullptr)
-			{
-				std::cout << "This value already exists in the tree." << std::endl;
-				return;
-			}
+			std::cout << "This value already exists in the tree." << std::endl;
+			return;
 		}
 
 		// Creates a new node
 		if (rootPtr == nullptr)
 		{
-			rootPtr = rootPtr->InsertNode(rootPtr, nodeValue);
+			rootPtr = InsertNode(rootPtr, nodeValue);
 		}
 		else
 		{
-			rootPtr->InsertNode(rootPtr, nodeValue);
+			InsertNode(rootPtr, nodeValue);
 		}
 		IncreaseNodeCount();
 	}
@@ -98,10 +119,10 @@ public:
 	template<typename Type>
 	void SwapValues(Type value1, Type value2)		// Swaps the position of two values
 	{
-		BSNode<Type>* tempNode1 = FindNode(value1, false);
-		BSNode<Type>* tempNode2 = FindNode(value2, false);
+		BSNode<Type>* tempNode1 = FindValue(value1, false);
+		BSNode<Type>* tempNode2 = FindValue(value2, false);
 		
-		// TODO: Test for valid switch before switching
+		// TODO: Test for valid swap before switching
 		if (tempNode1 != nullptr && tempNode2 != nullptr)
 		{
 			tempNode1->SetValue(tempNode1->GetValue() + tempNode2->GetValue());
@@ -115,12 +136,16 @@ public:
 	}
 
 	template<typename Type>
-	BSNode<Type>* FindNode(Type findValue, bool verbose)	// Attempts to find a node containing the given value
+	BSNode<Type>* FindValue(Type findValue, bool verbose = true)	// Attempts to find a node containing the given value
 	{
 		// If there are no nodes in the tree, returns nullptr and displays and error message
 		if (IsTreeEmpty())
 		{
-			std::cout << "There are no nodes in the tree." << std::endl;
+			// Verbose mode will output success/failure messages to the console
+			if (verbose)
+			{
+				std::cout << "There are no nodes in the tree." << std::endl;
+			}
 			return nullptr;
 		}
 
@@ -177,12 +202,12 @@ public:
 	template<typename Type>
 	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
 	{
-
+		// TOOD: To be added after refactoring FindNode
 	}
 
 	Type MaxValue()		// Finds the largest value stored in the tree
 	{
-
+		// TOOD: To be added after refactoring FindNode
 	}
 
 	bool IsTreeEmpty()		// Tests to see if the tree is empty

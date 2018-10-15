@@ -1,10 +1,12 @@
 /*																								  */
 
 #include <iostream>
+#include <array>
 
 #include "BSTree.h"
 
-template<typename T> bool GetUserInput(T* userInput);
+// See function definitions for descriptions
+template<typename Type> bool GetUserInput(Type* userInput);
 bool TestUserInput();
 
 int main()
@@ -13,6 +15,16 @@ int main()
 	bool(runProgram) = true;
 	int menuInput;
 	double userInput, userInput2;
+	
+	// Simple testing array
+	// TODO: Function for dynamically sized arrays?
+	/*
+	std::array<double,7> testValues = { 4, 2, 6, 1, 3, 5, 7 };
+	for (int count = 0; count < testValues.size(); count++)
+	{
+		theBST.CreateNode(testValues[count]);
+	}
+	*/
 
 	while (runProgram)
 	{
@@ -40,7 +52,8 @@ int main()
 				std::cout << "Enter the value you want to find: ";
 				if (GetUserInput(&userInput))
 				{
-					theBST.FindNode(userInput, true);
+					theBST.FindValue(userInput
+					);
 				}
 				break;
 			case 4:
@@ -71,7 +84,7 @@ int main()
 }
 
 // Gets user input
-template<typename T> bool GetUserInput(T* userInput) 
+template<typename Type> bool GetUserInput(Type* userInput) 
 {
 	std::cin >> *userInput;
 
