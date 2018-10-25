@@ -8,6 +8,7 @@ class BSNode
 {
 private:
 	Type value;									// The value held by this node
+	BSNode<Type>* parentPtr = nullptr;			// Pointer to the parent node of this node
 	BSNode<Type>* leftChildPtr = nullptr;		// Pointer to the left child node of this node
 	BSNode<Type>* rightChildPtr = nullptr;		// Pointer to the right child node of this node
 public:
@@ -25,13 +26,24 @@ public:
 		value = newValue;
 	}
 
+	BSNode<Type>* GetParentPtr()	// Returns the memory address of this node's parent
+	{
+		return parentPtr;
+	}
+
+	template<typename Type>
+	void SetParentPtr(BSNode<Type>* newPtr)		// Changes which node is this node's parent
+	{
+		parentPtr = newPtr;
+	}
+
 	BSNode<Type>* GetLeftChildPtr()		// Returns the memory address of this node's left child
 	{
 		return leftChildPtr;
 	}
 
 	template<typename Type>
-	void SetLeftChildPtr(Type* newPtr)		// Changes which node is this node's left child
+	void SetLeftChildPtr(BSNode<Type>* newPtr)		// Changes which node is this node's left child
 	{
 		leftChildPtr = newPtr;
 	}
@@ -42,7 +54,7 @@ public:
 	}
 
 	template<typename Type>
-	void SetRightChildPtr(Type* newPtr)		// Changes which node is this node's left child
+	void SetRightChildPtr(BSNode<Type>* newPtr)		// Changes which node is this node's left child
 	{
 		rightChildPtr = newPtr;
 	}

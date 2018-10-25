@@ -17,7 +17,7 @@ private:
 
 	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue)		// Inserts a new node 
 	{
-		// If the node being checked is null, creates a new node to occpy that spot on the tree
+		// If the node being checked is null, creates a new node to occupy that spot on the tree
 		if (nodeToCheck == nullptr)
 		{
 			BSNode<Type>* newNode = new BSNode<Type>(newValue);
@@ -29,14 +29,35 @@ private:
 		{
 			// Move down the tree along the left branch (runs recursively until an avaiable node is found)
 			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue));
+			nodeToCheck->GetLeftChildPtr().SetParentPtr(nodeToCheck);
 		}
 		else if (newValue > nodeToCheck->GetValue())
 		{
 			// Move down the tree along the right branch (runs recursively until an avaiable node is found)
 			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue));
+			nodeToCheck->GetRightChildPtr().SetParentPtr(nodeToCheck);
 		}
 
 		return nodeToCheck;
+	}
+
+	template<typename Type>
+	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
+	{
+		// TOOD: To be added after refactoring FindNode
+
+		// Target node is a leaf
+		if (nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() == nullptr)
+		{
+			
+		}
+		// Target node has only one child
+		else if ()
+		{
+
+		}
+		// Target node has two children
+
 	}
 
 	void PrintNode(BSNode<Type> *node, int space)	// Prints the contents of a node to the console
@@ -139,13 +160,8 @@ public:
 	BSNode<Type>* FindValue(Type findValue, bool verbose = true)	// Attempts to find a node containing the given value
 	{
 		// If there are no nodes in the tree, returns nullptr and displays and error message
-		if (IsTreeEmpty())
+		if (IsTreeEmpty(verbose))
 		{
-			// Verbose mode will output success/failure messages to the console
-			if (verbose)
-			{
-				std::cout << "There are no nodes in the tree." << std::endl;
-			}
 			return nullptr;
 		}
 
@@ -176,7 +192,7 @@ public:
 			// Checks for a larger value
 			else if (currentNode->GetValue() < findValue)
 			{
-				// Travels down the right branch to look fro the next match
+				// Travels down the right branch to look for the next match
 				currentNode = currentNode->GetRightChildPtr();
 			}
 		}
@@ -200,9 +216,26 @@ public:
 	}
 
 	template<typename Type>
-	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
+	void DeleteValue(Type delValue, bool verbose = true)	// Deletes a value from the tree
 	{
 		// TOOD: To be added after refactoring FindNode
+		BSNode<Type>* delNode = FindValue(delValue, false);
+
+		// If the value was not found in the tree, returns a nullptr
+		if (delNode == NULL)
+		{
+			// Verbose mode will output success/failure messages to the console
+			if (verbose)
+			{
+				std::cout << "Value \"" << delValue << "\" not found in the tree." << std::endl;
+			}
+			return nullptr;
+		}
+		// If the value was found in the tree, deletes that value from the tree
+		else
+		{
+			DeleteNode(delNode);
+		}
 	}
 
 	Type MaxValue()		// Finds the largest value stored in the tree
@@ -210,11 +243,16 @@ public:
 		// TOOD: To be added after refactoring FindNode
 	}
 
-	bool IsTreeEmpty()		// Tests to see if the tree is empty
+	bool IsTreeEmpty(bool verbose = true)		// Tests to see if the tree is empty
 	{
 		// Tree is really and truly empty
 		if (rootPtr == nullptr && nodeCount == 0)
 		{
+			// Verbose mode will output success/failure messages to the console
+			if (verbose)
+			{
+				std::cout << "There are no nodes in the tree." << std::endl;
+			}
 			return true;
 		}
 		// TODO: Delete this when I'm absolutely sure everything works right!
