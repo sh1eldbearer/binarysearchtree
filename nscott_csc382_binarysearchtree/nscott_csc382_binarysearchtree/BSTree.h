@@ -29,13 +29,13 @@ private:
 		{
 			// Move down the tree along the left branch (runs recursively until an avaiable node is found)
 			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue));
-			nodeToCheck->GetLeftChildPtr().SetParentPtr(nodeToCheck);
+			nodeToCheck->GetLeftChildPtr()->SetParentPtr(nodeToCheck);
 		}
 		else if (newValue > nodeToCheck->GetValue())
 		{
 			// Move down the tree along the right branch (runs recursively until an avaiable node is found)
 			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue));
-			nodeToCheck->GetRightChildPtr().SetParentPtr(nodeToCheck);
+			nodeToCheck->GetRightChildPtr()->SetParentPtr(nodeToCheck);
 		}
 
 		return nodeToCheck;
@@ -45,18 +45,36 @@ private:
 	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
 	{
 		// TOOD: To be added after refactoring FindNode
-
-		// Target node is a leaf
-		if (nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() == nullptr)
+		// Target node is the root
+		if (nodePtr == this->rootPtr)
 		{
-			
+			std::cout << "I'm a root!" << std::endl;
+		}
+		// Target node is a leaf
+		else if (nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() == nullptr)
+		{
+			if (nodePtr->GetParentPtr()->GetLeftChildPtr() == nodePtr)
+			{
+				nodePtr->GetParentPtr()->SetLeftChildPtr(nullptr);
+			}
+			else if (nodePtr->GetParentPtr()->GetRightChildPtr() == nodePtr)
+			{
+				nodePtr->GetParentPtr()->SetRightChildPtr(nullptr);
+			}
+			nodePtr->SetParentPtr(nullptr);
+			delete nodePtr;
 		}
 		// Target node has only one child
-		else if ()
+		else if ((nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() != nullptr) ||
+				 (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() == nullptr))
 		{
 
 		}
 		// Target node has two children
+		else if (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() != nullptr)
+		{
+
+		}
 
 	}
 
@@ -82,7 +100,7 @@ private:
 		}
 		std::cout << node->GetValue() << std::endl;
 
-		// Attempts to print the left child first 
+		// Attempts to print the left child last 
 		PrintNode(node->GetLeftChildPtr(), space);
 	}
 public:
@@ -116,7 +134,7 @@ public:
 	}
 
 	template<typename Type>
-	void CreateNode(Type nodeValue)	// Creates a new node in the tree
+	void InsertValue(Type nodeValue)	// Creates a new node in the tree
 	{
 		// Attempts to see if there is already a node containing this value in the tree
 		if (FindValue(nodeValue, false) != nullptr)
@@ -229,7 +247,6 @@ public:
 			{
 				std::cout << "Value \"" << delValue << "\" not found in the tree." << std::endl;
 			}
-			return nullptr;
 		}
 		// If the value was found in the tree, deletes that value from the tree
 		else

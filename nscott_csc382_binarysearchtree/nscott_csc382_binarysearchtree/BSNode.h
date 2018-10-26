@@ -13,7 +13,6 @@ private:
 	BSNode<Type>* rightChildPtr = nullptr;		// Pointer to the right child node of this node
 public:
 	BSNode(Type initValue = NULL) : value(initValue) { }		// Constructor
-	~BSNode();													// Destructor
 
 	Type GetValue()		// Returns the value stored in this node
 	{
@@ -31,7 +30,6 @@ public:
 		return parentPtr;
 	}
 
-	template<typename Type>
 	void SetParentPtr(BSNode<Type>* newPtr)		// Changes which node is this node's parent
 	{
 		parentPtr = newPtr;
@@ -42,7 +40,6 @@ public:
 		return leftChildPtr;
 	}
 
-	template<typename Type>
 	void SetLeftChildPtr(BSNode<Type>* newPtr)		// Changes which node is this node's left child
 	{
 		leftChildPtr = newPtr;
@@ -53,7 +50,6 @@ public:
 		return rightChildPtr;
 	}
 
-	template<typename Type>
 	void SetRightChildPtr(BSNode<Type>* newPtr)		// Changes which node is this node's left child
 	{
 		rightChildPtr = newPtr;

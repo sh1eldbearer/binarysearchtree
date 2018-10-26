@@ -45,18 +45,24 @@ int main()
 				std::cout << "Enter the node value: ";
 				if (GetUserInput(&userInput))
 				{
-					theBST.CreateNode(userInput);
+					theBST.InsertValue(userInput);
 				}
 				break;
 			case 2:		// Find a new node
 				std::cout << "Enter the value you want to find: ";
 				if (GetUserInput(&userInput))
 				{
-					theBST.FindValue(userInput
-					);
+					theBST.FindValue(userInput);
 				}
 				break;
-			case 4:
+			case 3:		// Delete a node containing a value
+				std::cout << "Enter the value you wish to delete: ";
+				if (GetUserInput(&userInput))
+				{
+					theBST.DeleteValue(userInput);
+				}
+				break;
+			case 4:		// Swap two values
 				std::cout << "Enter the first value to swap: ";
 				if (GetUserInput(&userInput))
 				{
