@@ -31,7 +31,7 @@ int main()
 		std::cout << " 1. Add a new node" << std::endl;
 		std::cout << " 2. Find a value stored in the tree" << std::endl;
 		std::cout << " 3. Delete a node from the tree" << std::endl;
-		std::cout << " 4. Swap two node values" << std::endl;
+		//std::cout << " 4. Swap two node values" << std::endl;
 		std::cout << "66. Display tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
 		std::cout << std::endl;
@@ -62,6 +62,7 @@ int main()
 					theBST.DeleteValue(userInput);
 				}
 				break;
+				/*
 			case 4:		// Swap two values
 				std::cout << "Enter the first value to swap: ";
 				if (GetUserInput(&userInput))
@@ -73,6 +74,7 @@ int main()
 					}
 				}
 				break;
+				*/
 			case 66:
 				theBST.PrintTree();
 				break;

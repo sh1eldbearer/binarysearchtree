@@ -68,7 +68,18 @@ private:
 		else if ((nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() != nullptr) ||
 				 (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() == nullptr))
 		{
-
+			if (nodePtr->GetLeftChildPtr() != nullptr)
+			{
+				SwapValues(nodePtr, nodePtr->GetLeftChildPtr());
+				delete nodePtr->GetLeftChildPtr();
+				nodePtr->SetLeftChildPtr(nullptr);
+			}
+			else if (nodePtr->GetRightChildPtr() != nullptr)
+			{
+				SwapValues(nodePtr, nodePtr->GetRightChildPtr());
+				delete nodePtr->GetRightChildPtr();
+				nodePtr->SetRightChildPtr(nullptr);
+			}
 		}
 		// Target node has two children
 		else if (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() != nullptr)
@@ -156,22 +167,11 @@ public:
 	}
 
 	template<typename Type>
-	void SwapValues(Type value1, Type value2)		// Swaps the position of two values
+	void SwapValues(BSNode<Type>* node1, BSNode<Type>* node2)		// Swaps the position of two values
 	{
-		BSNode<Type>* tempNode1 = FindValue(value1, false);
-		BSNode<Type>* tempNode2 = FindValue(value2, false);
-		
-		// TODO: Test for valid swap before switching
-		if (tempNode1 != nullptr && tempNode2 != nullptr)
-		{
-			tempNode1->SetValue(tempNode1->GetValue() + tempNode2->GetValue());
-			tempNode2->SetValue(tempNode1->GetValue() - tempNode2->GetValue());
-			tempNode1->SetValue(tempNode1->GetValue() - tempNode2->GetValue());
-		}
-		else
-		{
-			std::cout << "One or more values were not found in the tree. Please try again." << std::endl;
-		}
+		node1->SetValue(node1->GetValue() + node2->GetValue());
+		node2->SetValue(node1->GetValue() - node2->GetValue());
+		node1->SetValue(node1->GetValue() - node2->GetValue());
 	}
 
 	template<typename Type>
