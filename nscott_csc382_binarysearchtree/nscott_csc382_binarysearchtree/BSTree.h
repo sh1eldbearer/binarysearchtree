@@ -45,48 +45,66 @@ private:
 	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
 	{
 		// TOOD: To be added after refactoring FindNode
-		// Target node is the root
-		if (nodePtr == this->rootPtr)
-		{
-			std::cout << "I'm a root!" << std::endl;
-		}
 		// Target node is a leaf
-		else if (nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() == nullptr)
+		if (nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() == nullptr)
 		{
-			if (nodePtr->GetParentPtr()->GetLeftChildPtr() == nodePtr)
+			// Target node is the root node
+			if (nodePtr == this->rootPtr)
 			{
-				nodePtr->GetParentPtr()->SetLeftChildPtr(nullptr);
+				rootPtr = nullptr;
 			}
-			else if (nodePtr->GetParentPtr()->GetRightChildPtr() == nodePtr)
+			else 
 			{
-				nodePtr->GetParentPtr()->SetRightChildPtr(nullptr);
+				// This node is the left child of the previous node
+				if (nodePtr->GetParentPtr()->GetLeftChildPtr() == nodePtr)
+				{
+					// Makes the previous node's left child null (since it will be deleted)
+					nodePtr->GetParentPtr()->SetLeftChildPtr(nullptr);
+				}
+				// This node is the right child of the previous node
+				else if (nodePtr->GetParentPtr()->GetRightChildPtr() == nodePtr)
+				{
+					// Makes the previous node's right child null (since it will be deleted)
+					nodePtr->GetParentPtr()->SetRightChildPtr(nullptr);
+				}
 			}
-			nodePtr->SetParentPtr(nullptr);
+			// Deletes the node
 			delete nodePtr;
+			// Decreases the node count
+			DecreaseNodeCount();
 		}
 		// Target node has only one child
 		else if ((nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() != nullptr) ||
 				 (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() == nullptr))
 		{
+			// If this node only has a left child
 			if (nodePtr->GetLeftChildPtr() != nullptr)
 			{
+				// Swap the values of this node and its left child node
 				SwapValues(nodePtr, nodePtr->GetLeftChildPtr());
+				// Deletes the left child node
 				delete nodePtr->GetLeftChildPtr();
+				// Sets this node's left child pointer to null
 				nodePtr->SetLeftChildPtr(nullptr);
 			}
+			// If this node only has a right child
 			else if (nodePtr->GetRightChildPtr() != nullptr)
 			{
+				// Swap the values of this node and its right child node
 				SwapValues(nodePtr, nodePtr->GetRightChildPtr());
+				// Deletes the right child node
 				delete nodePtr->GetRightChildPtr();
+				// Sets this node's right child pointer to null
 				nodePtr->SetRightChildPtr(nullptr);
 			}
+			// Decreases the node count
+			DecreaseNodeCount();
 		}
 		// Target node has two children
 		else if (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() != nullptr)
 		{
 
 		}
-
 	}
 
 	void PrintNode(BSNode<Type> *node, int space)	// Prints the contents of a node to the console
@@ -113,6 +131,70 @@ private:
 
 		// Attempts to print the left child last 
 		PrintNode(node->GetLeftChildPtr(), space);
+	}
+
+	BSNode<Type>* MinNode()		// Finds the node containing the smallest value stored in the tree
+	{
+		// Starts at the node passed into the function (or rootPtr, if one was not passed)
+		BSNode<Type>* nodeToCheck = rootPtr;
+
+		// Checks if the current node has a left child
+		while (nodeToCheck->GetLeftChildPtr() != nullptr)
+		{
+			// Sets the current node's left child as the current node
+			nodeToCheck = nodeToCheck->GetLeftChildPtr();
+		}
+
+		// Once the rightmost node in the tree has been found, returns a pointer to that node
+		return nodeToCheck;
+	}
+
+	BSNode<Type>* MinNode(BSNode<Type>* node)		// Finds the node containing the smallest value stored in the tree
+	{
+		// Starts at the node passed into the function (or rootPtr, if one was not passed)
+		BSNode<Type>* nodeToCheck = node;
+
+		// Checks if the current node has a left child
+		while (nodeToCheck->GetLeftChildPtr() != nullptr)
+		{
+			// Sets the current node's left child as the current node
+			nodeToCheck = nodeToCheck->GetLeftChildPtr();
+		}
+
+		// Once the rightmost node in the tree has been found, returns a pointer to that node
+		return nodeToCheck;
+	}
+
+	BSNode<Type>* MaxNode()		// Finds the node containing the largest value stored in the tree
+	{
+		// Starts at the node passed into the function (or rootPtr, if one was not passed)
+		BSNode<Type>* nodeToCheck = rootPtr;
+
+		// Checks if the current node has a right child
+		while (nodeToCheck->GetRightChildPtr() != nullptr)
+		{
+			// Sets the current node's right child as the current node
+			nodeToCheck = nodeToCheck->GetRightChildPtr();
+		}
+
+		// Once the rightmost node in the tree has been found, returns a pointer to that node
+		return nodeToCheck;
+	}
+
+	BSNode<Type>* MaxNode(BSNode<Type>* node)		// Finds the node containing the largest value stored in the tree
+	{
+		// Starts at the node passed into the function (or rootPtr, if one was not passed)
+		BSNode<Type>* nodeToCheck = node;
+
+		// Checks if the current node has a right child
+		while (nodeToCheck->GetRightChildPtr() != nullptr)
+		{
+			// Sets the current node's right child as the current node
+			nodeToCheck = nodeToCheck->GetRightChildPtr();
+		}
+
+		// Once the rightmost node in the tree has been found, returns a pointer to that node
+		return nodeToCheck;
 	}
 public:
 	BSTree() {}		// Constructor
@@ -236,6 +318,11 @@ public:
 	template<typename Type>
 	void DeleteValue(Type delValue, bool verbose = true)	// Deletes a value from the tree
 	{
+		if (IsTreeEmpty())
+		{
+			return;
+		}
+
 		// TOOD: To be added after refactoring FindNode
 		BSNode<Type>* delNode = FindValue(delValue, false);
 
@@ -255,9 +342,16 @@ public:
 		}
 	}
 
+	Type MinValue()		// Finds the smallest value stored in the tree
+	{
+		// Returns the value contained by the node passed into the function
+		return MinNode()->GetValue();
+	}
+
 	Type MaxValue()		// Finds the largest value stored in the tree
 	{
-		// TOOD: To be added after refactoring FindNode
+		// Returns the value contained by the node passed into the function
+		return MaxNode()->GetValue();
 	}
 
 	bool IsTreeEmpty(bool verbose = true)		// Tests to see if the tree is empty

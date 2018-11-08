@@ -18,20 +18,21 @@ int main()
 	
 	// Simple testing array
 	// TODO: Function for dynamically sized arrays?
-	/*
+	
 	std::array<double,7> testValues = { 4, 2, 6, 1, 3, 5, 7 };
 	for (int count = 0; count < testValues.size(); count++)
 	{
-		theBST.CreateNode(testValues[count]);
+		theBST.InsertValue(testValues[count]);
 	}
-	*/
+	
 
 	while (runProgram)
 	{
 		std::cout << " 1. Add a new node" << std::endl;
 		std::cout << " 2. Find a value stored in the tree" << std::endl;
 		std::cout << " 3. Delete a node from the tree" << std::endl;
-		//std::cout << " 4. Swap two node values" << std::endl;
+		std::cout << " 4. Show the minimum value stored in the tree" << std::endl;
+		std::cout << " 5. Show the maximum value stored in the tree" << std::endl;
 		std::cout << "66. Display tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
 		std::cout << std::endl;
@@ -62,19 +63,14 @@ int main()
 					theBST.DeleteValue(userInput);
 				}
 				break;
-				/*
-			case 4:		// Swap two values
-				std::cout << "Enter the first value to swap: ";
-				if (GetUserInput(&userInput))
-				{
-					std::cout << "Enter the second value to swap: ";
-					if (GetUserInput(&userInput2))
-					{
-						theBST.SwapValues(userInput, userInput2);
-					}
-				}
+			case 4:
+				std::cout << "The smallest value stored in the tree is " <<
+					theBST.MinValue() << std::endl;
 				break;
-				*/
+			case 5:
+				std::cout << "The smallest value stored in the tree is " <<
+					theBST.MaxValue() << std::endl;
+				break;
 			case 66:
 				theBST.PrintTree();
 				break;
