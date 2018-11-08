@@ -103,7 +103,14 @@ private:
 		// Target node has two children
 		else if (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() != nullptr)
 		{
-
+			// Finds the successor node (the leftmost node in the right subtree)
+			BSNode<Type>* succeessor = MinNode(nodePtr->GetRightChildPtr());
+			// Swaps the values of the target node and the sucesssor
+			SwapValues(nodePtr, succeessor);
+			// Sets the left child pointer of the successor's parent to null
+			succeessor->GetParentPtr()->SetLeftChildPtr(nullptr);
+			// Deletes the successsor node, which now contains the value being deleted
+			delete succeessor;
 		}
 	}
 

@@ -19,7 +19,7 @@ int main()
 	// Simple testing array
 	// TODO: Function for dynamically sized arrays?
 	
-	std::array<double,7> testValues = { 4, 2, 6, 1, 3, 5, 7 };
+	std::array<double,15> testValues = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15 };
 	for (int count = 0; count < testValues.size(); count++)
 	{
 		theBST.InsertValue(testValues[count]);
