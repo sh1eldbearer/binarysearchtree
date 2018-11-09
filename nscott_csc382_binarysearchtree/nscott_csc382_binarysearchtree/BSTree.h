@@ -218,7 +218,7 @@ public:
 		rootPtr = newPtr;
 	}
 
-	int GetNodecount()		// Returns the current count of nodes in the tree
+	int GetNodeCount()		// Returns the current count of nodes in the tree
 	{
 		return nodeCount;
 	}
@@ -359,6 +359,88 @@ public:
 	{
 		// Returns the value contained by the node passed into the function
 		return MaxNode()->GetValue();
+	}
+
+	void LeftNodeRotation(BSNode<Type>* pivotNode)	// Rotates a node left for balancing
+	{
+		// Updates the appropriate child pointer of the pivotNode's parent
+		if (pivotNode->GetParentPtr()->GetLeftChildPtr() == pivotNode)	// If the pivotNode is its parent's left child node
+		{
+			// Changes the parent's left child to the pivot node's right child node
+			pivotNode->GetParentPtr()->SetLeftChildPtr(pivotNode->GetRightChildPtr());
+		}
+		else if (pivotNode->GetParentPtr()->GetRightChildPtr() == pivotNode)	//If the pivotNode is its parent's right child node
+		{
+			// Changes the parent's right child to the pivot node's right child node
+			pivotNode->GetParentPtr()->SetRightChildPtr(pivotNode->GetRightChildPtr());
+		}
+
+		// Sets the pivotNode's right child as the pivotNode's new parent
+		pivotNode->SetParentPtr(pivotNode->GetRightChildPtr());
+		
+		// Checks to see if the pivotNode's new parent had a left child node
+		if (pivotNode->GetRightChildPtr()->GetLeftChildPtr() != nullptr)
+		{
+			// Changes the pivotNode's right child to point to the old right child's left child node
+			pivotNode->SetRightChildPtr(pivotNode->GetRightChildPtr()->GetLeftChildPtr());
+			// Sets the pivotNode as the parent of its new right child node
+			pivotNode->GetRightChildPtr()->SetParentPtr(pivotNode);
+		}
+
+		// Sets the pivotNode as the left child of its parent node
+		pivotNode->GetParentPtr()->SetLeftChildPtr(pivotNode);
+	}
+
+	void RightNodeRotation(BSNode<Type>* pivotNode)	// Rotates a node right for balancing
+	{
+		// Updates the appropriate child pointer of the pivotNode's parent
+		if (pivotNode->GetParentPtr()->GetLeftChildPtr() == pivotNode)	// If the pivotNode is its parent's left child node
+		{
+			// Changes the parent's left child to the pivot node's left child node
+			pivotNode->GetParentPtr()->SetLeftChildPtr(pivotNode->GetLeftChildPtr());
+		}
+		else if (pivotNode->GetParentPtr()->GetRightChildPtr() == pivotNode)	//If the pivotNode is its parent's right child node
+		{
+			// Changes the parent's right child to the pivot node's left child node
+			pivotNode->GetParentPtr()->SetRightChildPtr(pivotNode->GetLeftChildPtr());
+		}
+
+		// Sets the pivotNode's left child as the pivotNode's new parent
+		pivotNode->SetParentPtr(pivotNode->GetLeftChildPtr());
+
+		// Checks to see if the pivotNode's new parent had a right child node
+		if (pivotNode->GetLeftChildPtr()->GetRightChildPtr() != nullptr)
+		{
+			// Changes the pivotNode's left child to point to the old left child's right child node
+			pivotNode->SetLeftChildPtr(pivotNode->GetLeftChildPtr()->GetRightChildPtr());
+			// Sets the pivotNode as the parent of its new left child node
+			pivotNode->GetLeftChildPtr()->SetParentPtr(pivotNode);
+		}
+
+		// Sets the pivotNode as the right child of its parent node
+		pivotNode->GetParentPtr()->SetRightChildPtr(pivotNode);
+	}
+
+	void GetNodeDetails(BSNode<Type>* node)		// Shows the value stored in a node and its adjacent node addresses and stored values
+	{
+		std::cout << "Node value: " << node->GetValue() << std::endl;
+		std::cout << "Parent: " << node->GetParentPtr() << " (Value: " << node->GetParentPtr()->GetValue() << ")" << std::endl;
+		if (node->GetLeftChildPtr() != nullptr)
+		{
+			std::cout << "Left child: " << node->GetLeftChildPtr() << " (Value: " << node->GetLeftChildPtr()->GetValue() << ")" << std::endl;
+		}
+		else
+		{
+			std::cout << "No left child node." << std::endl;
+		}
+		if (node->GetRightChildPtr() != nullptr)
+		{
+			std::cout << "Right child: " << node->GetRightChildPtr() << " (Value: " << node->GetRightChildPtr()->GetValue() << ")" << std::endl;
+		}
+		else
+		{
+			std::cout << "No right child node." << std::endl;
+		}
 	}
 
 	bool IsTreeEmpty(bool verbose = true)		// Tests to see if the tree is empty

@@ -14,13 +14,13 @@ int main()
 	BSTree<double> theBST;
 	bool(runProgram) = true;
 	int menuInput;
-	double userInput, userInput2;
+	double userInput;
 	
 	// Simple testing array
 	// TODO: Function for dynamically sized arrays?
 	
-	std::array<double,15> testValues = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15 };
-	for (int count = 0; count < testValues.size(); count++)
+	std::array<double,19> testValues = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15, 14.5, 16, 15.5, 17 };
+	for (int count = 0; count < (int)testValues.size(); count++)
 	{
 		theBST.InsertValue(testValues[count]);
 	}
@@ -33,6 +33,8 @@ int main()
 		std::cout << " 3. Delete a node from the tree" << std::endl;
 		std::cout << " 4. Show the minimum value stored in the tree" << std::endl;
 		std::cout << " 5. Show the maximum value stored in the tree" << std::endl;
+		std::cout << " 6. Rotate a node to the left" << std::endl;
+		std::cout << " 7. Rotate a node to the right" << std::endl;
 		std::cout << "66. Display tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
 		std::cout << std::endl;
@@ -70,6 +72,20 @@ int main()
 			case 5:
 				std::cout << "The smallest value stored in the tree is " <<
 					theBST.MaxValue() << std::endl;
+				break;
+			case 6:
+				std::cout << "Enter the value you wish to rotate to the left: ";
+				if (GetUserInput(&userInput))
+				{
+					theBST.LeftNodeRotation(theBST.FindValue(userInput, false));
+				}
+				break;
+			case 7:
+				std::cout << "Enter the value you wish to rotate to the right: ";
+				if (GetUserInput(&userInput))
+				{
+					theBST.RightNodeRotation(theBST.FindValue(userInput, false));
+				}
 				break;
 			case 66:
 				theBST.PrintTree();
