@@ -13,7 +13,7 @@ private:
 	BSNode<Type>* leftChildPtr = nullptr;		// Pointer to the left child node of this node
 	BSNode<Type>* rightChildPtr = nullptr;		// Pointer to the right child node of this node
 public:
-	BSNode(Type initValue = NULL, int height = 0) : value(initValue), height(height + 1) { }		// Constructor
+	BSNode(Type initValue = NULL, int height = -1) : value(initValue), height(height + 1) { }		// Constructor
 
 	Type GetValue()		// Returns the value stored in this node
 	{
