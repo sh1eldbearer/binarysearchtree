@@ -204,6 +204,40 @@ private:
 		// Once the rightmost node in the tree has been found, returns a pointer to that node
 		return nodeToCheck;
 	}
+
+	void UpdateParentNodePtrs(BSNode<Type>* node)	// Updates a node's parent's child pointers
+	{
+		// Checks to see if the pivotNode has a parent (i.e. is not the root node)
+		if (node->GetParentPtr() != nullptr)
+		{
+			// Updates the appropriate child pointer of the pivotNode's parent
+			if (node->GetParentPtr()->GetLeftChildPtr() == node)	// If the pivotNode is its parent's left child node
+			{
+				// Changes the parent's left child to the pivot node's left child node
+				node->GetParentPtr()->SetLeftChildPtr(node->GetLeftChildPtr());
+			}
+			else if (node->GetParentPtr()->GetRightChildPtr() == node)	//If the pivotNode is its parent's right child node
+			{
+				// Changes the parent's right child to the pivot node's left child node
+				node->GetParentPtr()->SetRightChildPtr(node->GetLeftChildPtr());
+			}
+		}
+	}
+
+	void BalanceTree(BSNode<Type>* leftSubtreeRoot, BSNode<Type>* rightSubtreeRoot)
+	{
+
+	}
+
+	BSNode<Type>* CheckLeftHeight() // Checks the height of the 
+	{
+
+	}
+
+	BSNode<Type>* CheckRightHeight()
+	{
+
+	}
 public:
 	BSTree() {}		// Constructor
 	~BSTree() {}	// Destructor
@@ -364,20 +398,15 @@ public:
 
 	void LeftNodeRotation(BSNode<Type>* pivotNode)	// Rotates a node left for balancing
 	{
-		// Updates the appropriate child pointer of the pivotNode's parent
-		if (pivotNode->GetParentPtr()->GetLeftChildPtr() == pivotNode)	// If the pivotNode is its parent's left child node
-		{
-			// Changes the parent's left child to the pivot node's right child node
-			pivotNode->GetParentPtr()->SetLeftChildPtr(pivotNode->GetRightChildPtr());
-		}
-		else if (pivotNode->GetParentPtr()->GetRightChildPtr() == pivotNode)	//If the pivotNode is its parent's right child node
-		{
-			// Changes the parent's right child to the pivot node's right child node
-			pivotNode->GetParentPtr()->SetRightChildPtr(pivotNode->GetRightChildPtr());
-		}
+		// Updates the appropriate child pointers of the pivotNode's parent node (if it exists)
+		UpdateParentNodePtrs(pivotNode);
 
 		// Sets the pivotNode's right child as the pivotNode's new parent
 		pivotNode->SetParentPtr(pivotNode->GetRightChildPtr());
+		if (pivotNode == rootPtr)
+		{
+			rootPtr = pivotNode->GetRightChildPtr();
+		}
 		
 		// Checks to see if the pivotNode's new parent had a left child node
 		if (pivotNode->GetRightChildPtr()->GetLeftChildPtr() != nullptr)
@@ -394,20 +423,15 @@ public:
 
 	void RightNodeRotation(BSNode<Type>* pivotNode)	// Rotates a node right for balancing
 	{
-		// Updates the appropriate child pointer of the pivotNode's parent
-		if (pivotNode->GetParentPtr()->GetLeftChildPtr() == pivotNode)	// If the pivotNode is its parent's left child node
-		{
-			// Changes the parent's left child to the pivot node's left child node
-			pivotNode->GetParentPtr()->SetLeftChildPtr(pivotNode->GetLeftChildPtr());
-		}
-		else if (pivotNode->GetParentPtr()->GetRightChildPtr() == pivotNode)	//If the pivotNode is its parent's right child node
-		{
-			// Changes the parent's right child to the pivot node's left child node
-			pivotNode->GetParentPtr()->SetRightChildPtr(pivotNode->GetLeftChildPtr());
-		}
+		// Updates the appropriate child pointers of the pivotNode's parent node (if it exists)
+		UpdateParentNodePtrs(pivotNode);
 
 		// Sets the pivotNode's left child as the pivotNode's new parent
 		pivotNode->SetParentPtr(pivotNode->GetLeftChildPtr());
+		if (pivotNode == rootPtr)
+		{
+			rootPtr = pivotNode->GetLeftChildPtr();
+		}
 
 		// Checks to see if the pivotNode's new parent had a right child node
 		if (pivotNode->GetLeftChildPtr()->GetRightChildPtr() != nullptr)
