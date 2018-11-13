@@ -1,7 +1,5 @@
-#ifndef BSNode_h
-#define BSNode_h
-
-/*																								  */
+#ifndef BSNODE_H
+#define BSNODE_H
 
 template<typename Type>
 class BSNode

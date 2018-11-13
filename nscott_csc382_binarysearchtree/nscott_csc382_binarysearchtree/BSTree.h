@@ -1,7 +1,5 @@
-#ifndef BSTree_h
-#define BSTree_h
-
-/*																								  */
+#ifndef BSTREE_H
+#define BSTREE_H
 
 #include <iostream>
 
@@ -15,7 +13,7 @@ private:
 	int nodeCount = 0;			// Counter for how many nodes are currently in the tree 
 	int spaceCount = 5;	// The number of spaces to add between each level of the tree when counting
 
-	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue, int height = -1)		// Inserts a new node 
+	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type& newValue, int height = -1)		// Inserts a new node 
 	{
 		// If the node being checked is null, creates a new node to occupy that spot on the tree
 		if (nodeToCheck == nullptr)
@@ -41,13 +39,12 @@ private:
 			// Move down the tree along the right branch (runs recursively until an available node is found)
 			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue, nodeToCheck->GetHeight()));
 			nodeToCheck->GetRightChildPtr()->SetParentPtr(nodeToCheck);
-		}
+		}		
 
 		// Returns the next node to be checked (allows this function to run recursively until the node is created)
 		return nodeToCheck;
 	}
 
-	template<typename Type>
 	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
 	{
 		// Target node is a leaf
@@ -168,6 +165,22 @@ private:
 		UpdateNodeHeight(rootPtr);
 	}
 
+	void DeleteAllNodes(BSNode<Type>* startNode)	// Deletes a node, and all of its child nodes
+	{
+		// Prevents errors if there is no node at this address
+		if (startNode == nullptr)
+		{
+			return;
+		}
+
+		// Deletes nodes in the left subtree
+		DeleteAllNodes(startNode->GetLeftChildPtr());
+		// Deletes nodes in the right subtree
+		DeleteAllNodes(startNode->GetRightChildPtr());
+		// Deletes the starting node 
+		DeleteNode(startNode);
+	}
+
 	void PrintNode(BSNode<Type> *node, int space)	// Prints the contents of a node to the console
 	{
 		// If the current node is null, don't print anything
@@ -260,28 +273,38 @@ private:
 
 	BSNode<Type>* FindHighestNode(BSNode<Type>* startingNode) // Finds the highest node in the tree by recursively checking down from an initial node
 	{
+		// Initializes the starting node as the highest node in the tree
 		BSNode<Type>* highestNode = startingNode;
-		
+
+		// If a nullptr was passed into the function, or if the starting node has no children, exits the function immediately to prevent exceptions
 		if (startingNode == nullptr || (startingNode->GetLeftChildPtr() == nullptr && startingNode->GetRightChildPtr() == nullptr))
 		{
 			return highestNode;
 		}
 
+		// Checks the left child's height
 		if (startingNode->GetLeftChildPtr() != nullptr)
 		{
+			// Checks the left child's height against the highest node's height
 			if (startingNode->GetLeftChildPtr()->GetHeight() > highestNode->GetHeight())
 			{
+				// If the left child's height is greater than the highest node's, the child becomes the new highest node
 				highestNode = startingNode->GetLeftChildPtr();
 			}
+			// Checks the left child to see if any of its children are the highest node
 			FindHighestNode(startingNode->GetLeftChildPtr(), highestNode);
 		}
 
+		// Checks the right child's height
 		if (startingNode->GetRightChildPtr() != nullptr)
 		{
+			// Checks the right child's height against the highest node's height
 			if (startingNode->GetRightChildPtr()->GetHeight() > highestNode->GetHeight())
 			{
+				// If the right child's height is greater than the highest node's, the child becomes the new highest node
 				highestNode = startingNode->GetRightChildPtr();
 			}
+			// Checks the right child to see if any of its children are the highest node
 			FindHighestNode(startingNode->GetRightChildPtr(), highestNode);
 		}
 
@@ -290,28 +313,40 @@ private:
 
 	BSNode<Type>* FindHighestNode(BSNode<Type>* startingNode, BSNode<Type>*& highestNode) // Finds the highest node in the tree by recursively checking down from an initial node
 	{
+		// The highest node is passed as a reference to a pointer, so the original function keeps track of the highest node in the tree
+
+		// If a nullptr was passed into the function, or if the starting node has no children, exits the function immediately to prevent exceptions
 		if (startingNode == nullptr || (startingNode->GetLeftChildPtr() == nullptr && startingNode->GetRightChildPtr() == nullptr))
 		{
 			return highestNode;
 		}
 
+		// Checks the left child's height
 		if (startingNode->GetLeftChildPtr() != nullptr)
 		{
+			// Checks the left child's height against the highest node's height
 			if (startingNode->GetLeftChildPtr()->GetHeight() > highestNode->GetHeight())
 			{
+				// If the left child's height is greater than the highest node's, the child becomes the new highest node
 				highestNode = startingNode->GetLeftChildPtr();
 			}
+			// Checks the left child to see if any of its children are the highest node
 			FindHighestNode(startingNode->GetLeftChildPtr(), highestNode);
 		}
 
+		// Checks the right child's height
 		if (startingNode->GetRightChildPtr() != nullptr)
 		{
+			// Checks the right child's height against the highest node's height
 			if (startingNode->GetRightChildPtr()->GetHeight() > highestNode->GetHeight())
 			{
+				// If the right child's height is greater than the highest node's, the child becomes the new highest node
 				highestNode = startingNode->GetRightChildPtr();
 			}
+			// Checks the right child to see if any of its children are the highest node
 			FindHighestNode(startingNode->GetRightChildPtr(), highestNode);
 		}
+
 		return highestNode;
 	}
 
@@ -361,7 +396,6 @@ public:
 		return rootPtr;
 	}
 
-	template<typename Type>
 	void SetRootPtr(Type* newPtr)		// Changes which node is the tree's root node
 	{
 		rootPtr = newPtr;
@@ -382,7 +416,6 @@ public:
 		nodeCount--;
 	}
 
-	template<typename Type>
 	void InsertValue(Type nodeValue)	// Creates a new node in the tree
 	{
 		// Attempts to see if there is already a node containing this value in the tree
@@ -394,7 +427,6 @@ public:
 
 		// Creates a new node
 		InsertNode(rootPtr, nodeValue);
-		std::cout << "Successfully inserted " << nodeValue << " into the tree. ";
 
 		// Increases the node count
 		IncreaseNodeCount();
@@ -402,7 +434,6 @@ public:
 		BalanceTree(nodeValue);
 	}
 
-	template<typename Type>
 	void SwapValues(BSNode<Type>* node1, BSNode<Type>* node2)		// Swaps the position of two values
 	{
 		node1->SetValue(node1->GetValue() + node2->GetValue());
@@ -410,10 +441,9 @@ public:
 		node1->SetValue(node1->GetValue() - node2->GetValue());
 	}
 
-	template<typename Type>
 	BSNode<Type>* FindValue(Type findValue, bool verbose = true)	// Attempts to find a node containing the given value
 	{
-		// If there are no nodes in the tree, returns nullptr and displays and error message
+		// If there are no nodes in the tree, returns nullptr and displays an error message
 		if (IsTreeEmpty(verbose))
 		{
 			return nullptr;
@@ -469,10 +499,10 @@ public:
 		return currentNode;
 	}
 
-	template<typename Type>
 	void DeleteValue(Type delValue, bool verbose = true)	// Deletes a value from the tree
 	{
-		if (IsTreeEmpty())
+		// If there are no nodes in the tree, displays an error message
+		if (IsTreeEmpty(verbose))
 		{
 			return;
 		}
@@ -494,6 +524,17 @@ public:
 		{
 			DeleteNode(delNode);
 		}
+	}
+
+	void DeleteAllValues(bool verbose = true)	// Deletes all the nodes in the tree 
+	{
+		// If there are no nodes in the tree, displays an error message
+		if (IsTreeEmpty(verbose))
+		{
+			return;
+		}
+
+		DeleteAllNodes(rootPtr);
 	}
 
 	Type MinValue()		// Finds the smallest value stored in the tree
@@ -581,6 +622,8 @@ public:
 		{
 			return;
 		}
+
+		// Displays the node's information
 		std::cout << "Node value: " << node->GetValue() << std::endl;
 		std::cout << "Node height: " << node->GetHeight() << std::endl;
 		if (node->GetParentPtr() != nullptr)
@@ -639,23 +682,31 @@ public:
 	void BalanceTree(Type newValue)
 	{
 		int leftHeight = 0, rightHeight = 0;
+
+		// Checks to see if there is a left subtree
 		if (rootPtr->GetLeftChildPtr() != nullptr)
 		{
+			// Finds the highest node in the subtree, and returns its height
 			leftHeight = FindHighestNode(rootPtr->GetLeftChildPtr())->GetHeight();
 		}
 
+		// Checks to see if there is a right subtree
 		if (rootPtr->GetRightChildPtr() != nullptr)
 		{
+			// Finds the highest node in the subtree, and returns its height
 			rightHeight = FindHighestNode(rootPtr->GetRightChildPtr())->GetHeight();
 		}
 
+		// Calculates the difference levels between the left and right subtrees
 		int balanceValue = leftHeight - rightHeight;
 
+		// If there is 1 or less levels of difference between the subtrees, exits the function
 		if (balanceValue > -1 || balanceValue < 1)
 		{
 			return;
 		}	
 
+		// Checks for a left subtree
 		if (rootPtr->GetLeftChildPtr() != nullptr)
 		{
 			// Left-left case
@@ -670,6 +721,7 @@ public:
 				RightNodeRotation(rootPtr);
 			}
 		}
+		// Checks for a right subtree
 		if (rootPtr->GetRightChildPtr() != nullptr)
 		{
 			// Right-right case
