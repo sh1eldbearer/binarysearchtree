@@ -21,19 +21,24 @@ private:
 		if (nodeToCheck == nullptr)
 		{
 			BSNode<Type>* newNode = new BSNode<Type>(newValue, height);
+			// If this is the first node in the tree, sets this node as the root
+			if (rootPtr == nullptr)
+			{
+				rootPtr = newNode;
+			}
 			return newNode;
 		}
 
 		// Otherwise, looks at the current node's value to determine which branch to traverse next
 		if (newValue < nodeToCheck->GetValue())
 		{
-			// Move down the tree along the left branch (runs recursively until an avaiable node is found)
+			// Move down the tree along the left branch (runs recursively until an available node is found)
 			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue, nodeToCheck->GetHeight()));
 			nodeToCheck->GetLeftChildPtr()->SetParentPtr(nodeToCheck);
 		}
 		else if (newValue > nodeToCheck->GetValue())
 		{
-			// Move down the tree along the right branch (runs recursively until an avaiable node is found)
+			// Move down the tree along the right branch (runs recursively until an available node is found)
 			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue, nodeToCheck->GetHeight()));
 			nodeToCheck->GetRightChildPtr()->SetParentPtr(nodeToCheck);
 		}
@@ -45,12 +50,11 @@ private:
 	template<typename Type>
 	void DeleteNode(BSNode<Type>* nodePtr)	// Deletes a node from the tree
 	{
-		// TOOD: To be added after refactoring FindNode
 		// Target node is a leaf
 		if (nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() == nullptr)
 		{
 			// Target node is the root node
-			if (nodePtr == this->rootPtr)
+			if (nodePtr == rootPtr)
 			{
 				rootPtr = nullptr;
 			}
@@ -69,50 +73,99 @@ private:
 					nodePtr->GetParentPtr()->SetRightChildPtr(nullptr);
 				}
 			}
-			// Deletes the node
-			delete nodePtr;
-			// Decreases the node count
-			DecreaseNodeCount();
 		}
 		// Target node has only one child
 		else if ((nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() != nullptr) ||
 			(nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() == nullptr))
 		{
+			BSNode<Type>* childNode = nullptr;
 			// If this node only has a left child
 			if (nodePtr->GetLeftChildPtr() != nullptr)
 			{
-				// Swap the values of this node and its left child node
-				SwapValues(nodePtr, nodePtr->GetLeftChildPtr());
-				// Deletes the left child node
-				delete nodePtr->GetLeftChildPtr();
-				// Sets this node's left child pointer to null
-				nodePtr->SetLeftChildPtr(nullptr);
+				// If the target node is the root node
+				if (nodePtr == rootPtr)
+				{
+					// Sets the left child as the root pointer
+					rootPtr = nodePtr->GetLeftChildPtr();
+					// Clears the left child's parent pointer
+					nodePtr->GetLeftChildPtr()->SetParentPtr(nullptr);
+				}
+				else
+				{
+					// Swap the values of this node and its left child node
+					SwapValues(nodePtr, nodePtr->GetLeftChildPtr());
+					// Deletes the left child node
+					childNode = nodePtr->GetLeftChildPtr();
+					// Sets this node's left child pointer to null
+					nodePtr->SetLeftChildPtr(nullptr);
+				}
 			}
 			// If this node only has a right child
 			else if (nodePtr->GetRightChildPtr() != nullptr)
 			{
-				// Swap the values of this node and its right child node
-				SwapValues(nodePtr, nodePtr->GetRightChildPtr());
-				// Deletes the right child node
-				delete nodePtr->GetRightChildPtr();
-				// Sets this node's right child pointer to null
-				nodePtr->SetRightChildPtr(nullptr);
+				// If the target node is the root node
+				if (nodePtr == rootPtr)
+				{
+					// Sets the right child as the root pointer
+					rootPtr = nodePtr->GetRightChildPtr();
+					// Clears the right child's parent pointer
+					nodePtr->GetRightChildPtr()->SetParentPtr(nullptr);
+				}
+				else
+				{
+					// Swap the values of this node and its right child node
+					SwapValues(nodePtr, nodePtr->GetRightChildPtr());
+					// Deletes the right child node
+					childNode = nodePtr->GetRightChildPtr();
+					// Sets this node's right child pointer to null
+					nodePtr->SetRightChildPtr(nullptr);
+				}
 			}
-			// Decreases the node count
-			DecreaseNodeCount();
+			// Stores orphaned child node as the target node
+			nodePtr = childNode;
 		}
 		// Target node has two children
 		else if (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() != nullptr)
 		{
-			// Finds the successor node (the leftmost node in the right subtree)
-			BSNode<Type>* succeessor = MinNode(nodePtr->GetRightChildPtr());
-			// Swaps the values of the target node and the sucesssor
-			SwapValues(nodePtr, succeessor);
-			// Sets the left child pointer of the successor's parent to null
-			succeessor->GetParentPtr()->SetLeftChildPtr(nullptr);
-			// Deletes the successsor node, which now contains the value being deleted
-			delete succeessor;
+			// Attempts to find the successor node by checking for a left branch in the target node's right subtree
+			if (nodePtr->GetRightChildPtr()->GetLeftChildPtr() != nullptr)
+			{
+				// Looks for the smallest value in the right subtree as a successor
+				BSNode<Type>* successor = MinNode(nodePtr->GetRightChildPtr());
+				// Sets the left child pointer of the successor's parent to null
+				successor->GetParentPtr()->SetLeftChildPtr(nullptr);
+				// Swaps the values of the target node and the successor
+				SwapValues(nodePtr, successor);
+				// Sets the successor node as the target node
+				nodePtr = successor;
+			}
+			// Otherwise, simply uses the next highest value as the successor node
+			else
+			{
+				// If the target pointer is its parent's left child, sets the successor as the parent's new left child
+				if (nodePtr->GetParentPtr()->GetLeftChildPtr() == nodePtr)
+				{
+					nodePtr->GetParentPtr()->SetLeftChildPtr(nodePtr->GetRightChildPtr());
+				}
+				// If the target pointer is its parent's right child, sets the successor as the parent's new right child
+				else if (nodePtr->GetParentPtr()->GetRightChildPtr() == nodePtr)
+				{
+					nodePtr->GetParentPtr()->SetRightChildPtr(nodePtr->GetRightChildPtr());
+				}
+				// Sets the target pointer's parent as the parent of the successor node
+				nodePtr->GetRightChildPtr()->SetParentPtr(nodePtr->GetParentPtr());
+				// Sets the target pointer's left child as the left child of the successor node
+				nodePtr->GetRightChildPtr()->SetLeftChildPtr(nodePtr->GetLeftChildPtr());
+				// Sets the successor as the target pointer's left child's parent node
+				nodePtr->GetLeftChildPtr()->SetParentPtr(nodePtr->GetRightChildPtr());
+			}
 		}
+		// Deletes the target node
+		delete nodePtr;
+		// Decreases the node count
+		DecreaseNodeCount();
+		// Updates the heights of all nodes in the tree
+		UpdateNodeHeight(rootPtr);
 	}
 
 	void PrintNode(BSNode<Type> *node, int space)	// Prints the contents of a node to the console
@@ -141,7 +194,7 @@ private:
 		PrintNode(node->GetLeftChildPtr(), space);
 	}
 
-	BSNode<Type>* MinNode()		// Finds the node containing the smallest value stored in the tree
+	BSNode<Type>* MinNode()	// Finds the node containing the smallest value stored in the tree, starting at the root node
 	{
 		// Starts at the node passed into the function (or rootPtr, if one was not passed)
 		BSNode<Type>* nodeToCheck = rootPtr;
@@ -157,7 +210,7 @@ private:
 		return nodeToCheck;
 	}
 
-	BSNode<Type>* MinNode(BSNode<Type>* node)		// Finds the node containing the smallest value stored in the tree
+	BSNode<Type>* MinNode(BSNode<Type>* node) // Finds the node containing the smallest value stored in the tree, starting at a specific node
 	{
 		// Starts at the node passed into the function (or rootPtr, if one was not passed)
 		BSNode<Type>* nodeToCheck = node;
@@ -173,7 +226,7 @@ private:
 		return nodeToCheck;
 	}
 
-	BSNode<Type>* MaxNode()		// Finds the node containing the largest value stored in the tree
+	BSNode<Type>* MaxNode()	// Finds the node containing the largest value stored in the tree, starting at the root node
 	{
 		// Starts at the node passed into the function (or rootPtr, if one was not passed)
 		BSNode<Type>* nodeToCheck = rootPtr;
@@ -189,7 +242,7 @@ private:
 		return nodeToCheck;
 	}
 
-	BSNode<Type>* MaxNode(BSNode<Type>* node)		// Finds the node containing the largest value stored in the tree
+	BSNode<Type>* MaxNode(BSNode<Type>* node) // Finds the node containing the largest value stored in the tree, starting at a specific node
 	{
 		// Starts at the node passed into the function (or rootPtr, if one was not passed)
 		BSNode<Type>* nodeToCheck = node;
@@ -203,6 +256,82 @@ private:
 
 		// Once the rightmost node in the tree has been found, returns a pointer to that node
 		return nodeToCheck;
+	}
+
+	BSNode<Type>* FindHighestNode(BSNode<Type>* startingNode) // Finds the highest node in the tree by recursively checking down from an initial node
+	{
+		BSNode<Type>* highestNode = startingNode;
+		
+		if (startingNode == nullptr || (startingNode->GetLeftChildPtr() == nullptr && startingNode->GetRightChildPtr() == nullptr))
+		{
+			return highestNode;
+		}
+
+		if (startingNode->GetLeftChildPtr() != nullptr)
+		{
+			if (startingNode->GetLeftChildPtr()->GetHeight() > highestNode->GetHeight())
+			{
+				highestNode = startingNode->GetLeftChildPtr();
+			}
+			FindHighestNode(startingNode->GetLeftChildPtr(), highestNode);
+		}
+
+		if (startingNode->GetRightChildPtr() != nullptr)
+		{
+			if (startingNode->GetRightChildPtr()->GetHeight() > highestNode->GetHeight())
+			{
+				highestNode = startingNode->GetRightChildPtr();
+			}
+			FindHighestNode(startingNode->GetRightChildPtr(), highestNode);
+		}
+
+		return highestNode;
+	}
+
+	BSNode<Type>* FindHighestNode(BSNode<Type>* startingNode, BSNode<Type>*& highestNode) // Finds the highest node in the tree by recursively checking down from an initial node
+	{
+		if (startingNode == nullptr || (startingNode->GetLeftChildPtr() == nullptr && startingNode->GetRightChildPtr() == nullptr))
+		{
+			return highestNode;
+		}
+
+		if (startingNode->GetLeftChildPtr() != nullptr)
+		{
+			if (startingNode->GetLeftChildPtr()->GetHeight() > highestNode->GetHeight())
+			{
+				highestNode = startingNode->GetLeftChildPtr();
+			}
+			FindHighestNode(startingNode->GetLeftChildPtr(), highestNode);
+		}
+
+		if (startingNode->GetRightChildPtr() != nullptr)
+		{
+			if (startingNode->GetRightChildPtr()->GetHeight() > highestNode->GetHeight())
+			{
+				highestNode = startingNode->GetRightChildPtr();
+			}
+			FindHighestNode(startingNode->GetRightChildPtr(), highestNode);
+		}
+		return highestNode;
+	}
+
+	void UpdateNodeHeight(BSNode<Type>* node, int height = 0)	// Updates the height value of each node in the tree
+	{
+		// If there are no nodes in the tree, exits the function
+		if (IsTreeEmpty(false))
+		{
+			return;
+		}
+
+		node->SetHeight(height);
+		if (node->GetLeftChildPtr() != nullptr)
+		{
+			UpdateNodeHeight(node->GetLeftChildPtr(), height + 1);
+		}
+		if (node->GetRightChildPtr() != nullptr)
+		{
+			UpdateNodeHeight(node->GetRightChildPtr(), height + 1);
+		}
 	}
 
 	void UpdateParentNodePtrs(BSNode<Type>* node)	// Updates a node's parent's child pointers
@@ -222,35 +351,6 @@ private:
 				node->GetParentPtr()->SetRightChildPtr(node->GetLeftChildPtr());
 			}
 		}
-	}
-
-	BSNode<Type>* CheckTreeHeight(BSNode<Type>* startingNode) // Checks the height of the left subtree
-	{
-		if (startingNode->GetLeftChildPtr() != NULL)
-		{
-			startingNode = CheckTreeHeight(startingNode->GetLeftChildPtr());
-		}
-
-		if (startingNode->GetRightChildPtr() != NULL)
-		{
-			startingNode = CheckTreeHeight(startingNode->GetRightChildPtr());
-		}
-
-		return startingNode;
-		/*
-		if (nodeToCheck->GetHeight() > nodeToCheck->GetLeftChildPtr()->GetHeight())
-		{
-			return CheckTreeHeight(nodeToCheck->GetLeftChildPtr());
-		}
-		else if (nodeToCheck->GetHeight() > nodeToCheck->GetRightChildPtr()->GetHeight())
-		{
-			return CheckTreeHeight(nodeToCheck->GetRightChildPtr());
-		}
-		else
-		{
-			return nodeToCheck;
-		}
-		*/
 	}
 public:
 	BSTree() {}		// Constructor
@@ -293,15 +393,13 @@ public:
 		}
 
 		// Creates a new node
-		if (rootPtr == nullptr)
-		{
-			rootPtr = InsertNode(rootPtr, nodeValue);
-		}
-		else
-		{
-			InsertNode(rootPtr, nodeValue);
-		}
+		InsertNode(rootPtr, nodeValue);
+		std::cout << "Successfully inserted " << nodeValue << " into the tree. ";
+
+		// Increases the node count
 		IncreaseNodeCount();
+		// Attempt to balance the tree
+		BalanceTree(nodeValue);
 	}
 
 	template<typename Type>
@@ -383,7 +481,7 @@ public:
 		BSNode<Type>* delNode = FindValue(delValue, false);
 
 		// If the value was not found in the tree, returns a nullptr
-		if (delNode == NULL)
+		if (delNode == nullptr)
 		{
 			// Verbose mode will output success/failure messages to the console
 			if (verbose)
@@ -420,6 +518,7 @@ public:
 		if (pivotNode == rootPtr)
 		{
 			rootPtr = pivotNode->GetRightChildPtr();
+			rootPtr->SetParentPtr(nullptr);
 		}
 		
 		// Checks to see if the pivotNode's new parent had a left child node
@@ -430,9 +529,16 @@ public:
 			// Sets the pivotNode as the parent of its new right child node
 			pivotNode->GetRightChildPtr()->SetParentPtr(pivotNode);
 		}
+		// If not, sets the pivotNode's right child pointer to null
+		else
+		{
+			pivotNode->SetRightChildPtr(nullptr);
+		}
 
 		// Sets the pivotNode as the left child of its parent node
 		pivotNode->GetParentPtr()->SetLeftChildPtr(pivotNode);
+
+		UpdateNodeHeight(rootPtr);
 	}
 
 	void RightNodeRotation(BSNode<Type>* pivotNode)	// Rotates a node right for balancing
@@ -445,6 +551,7 @@ public:
 		if (pivotNode == rootPtr)
 		{
 			rootPtr = pivotNode->GetLeftChildPtr();
+			rootPtr->SetParentPtr(nullptr);
 		}
 
 		// Checks to see if the pivotNode's new parent had a right child node
@@ -455,13 +562,25 @@ public:
 			// Sets the pivotNode as the parent of its new left child node
 			pivotNode->GetLeftChildPtr()->SetParentPtr(pivotNode);
 		}
+		// If not, sets the pivotNode's left child pointer to null
+		else
+		{
+			pivotNode->SetLeftChildPtr(nullptr);
+		}
 
 		// Sets the pivotNode as the right child of its parent node
 		pivotNode->GetParentPtr()->SetRightChildPtr(pivotNode);
+
+		UpdateNodeHeight(rootPtr);
 	}
 
 	void GetNodeDetails(BSNode<Type>* node)		// Shows the value stored in a node and its adjacent node addresses and stored values
 	{
+		// If the pointer is null, exits the function (prevents exceptions)
+		if (node == nullptr)
+		{
+			return;
+		}
 		std::cout << "Node value: " << node->GetValue() << std::endl;
 		std::cout << "Node height: " << node->GetHeight() << std::endl;
 		if (node->GetParentPtr() != nullptr)
@@ -510,15 +629,61 @@ public:
 
 	void PrintTree() // Prints the tree to the console (right branches are on top)
 	{ 
+		if (IsTreeEmpty(true))
+		{
+			return;
+		}
 		PrintNode(rootPtr, 0);
 	}
 
-	void BalanceTree()
+	void BalanceTree(Type newValue)
 	{
-		BSNode<Type>* highestLeaf = CheckTreeHeight(rootPtr->GetLeftChildPtr());
-		std::cout << "Left subtree height: " << highestLeaf->GetHeight() << std::endl;
-		highestLeaf = CheckTreeHeight(rootPtr->GetRightChildPtr());
-		std::cout << "Right subtree height: " << highestLeaf->GetHeight() << std::endl;
+		int leftHeight = 0, rightHeight = 0;
+		if (rootPtr->GetLeftChildPtr() != nullptr)
+		{
+			leftHeight = FindHighestNode(rootPtr->GetLeftChildPtr())->GetHeight();
+		}
+
+		if (rootPtr->GetRightChildPtr() != nullptr)
+		{
+			rightHeight = FindHighestNode(rootPtr->GetRightChildPtr())->GetHeight();
+		}
+
+		int balanceValue = leftHeight - rightHeight;
+
+		if (balanceValue > -1 || balanceValue < 1)
+		{
+			return;
+		}	
+
+		if (rootPtr->GetLeftChildPtr() != nullptr)
+		{
+			// Left-left case
+			if (balanceValue > 1 && newValue < rootPtr->GetLeftChildPtr()->GetValue())
+			{
+				RightNodeRotation(rootPtr);
+			}
+			// Left-right case
+			else if (balanceValue > 1 && newValue > rootPtr->GetLeftChildPtr()->GetValue())
+			{
+				LeftNodeRotation(rootPtr->GetLeftChildPtr());
+				RightNodeRotation(rootPtr);
+			}
+		}
+		if (rootPtr->GetRightChildPtr() != nullptr)
+		{
+			// Right-right case
+			if (balanceValue < -1 && newValue > rootPtr->GetRightChildPtr()->GetValue())
+			{
+				LeftNodeRotation(rootPtr);
+			}
+			// Right-left case
+			else if (balanceValue < -1 && newValue < rootPtr->GetRightChildPtr()->GetValue())
+			{
+				RightNodeRotation((rootPtr->GetRightChildPtr()));
+				LeftNodeRotation((rootPtr));
+			}
+		}
 	}
 };
 

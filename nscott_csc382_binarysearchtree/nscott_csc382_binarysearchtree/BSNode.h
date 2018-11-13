@@ -8,7 +8,7 @@ class BSNode
 {
 private:
 	Type value;									// The value held by this node
-	int height;									// The height this node resides at in the tree
+	int height = -1;									// The height this node resides at in the tree
 	BSNode<Type>* parentPtr = nullptr;			// Pointer to the parent node of this node
 	BSNode<Type>* leftChildPtr = nullptr;		// Pointer to the left child node of this node
 	BSNode<Type>* rightChildPtr = nullptr;		// Pointer to the right child node of this node

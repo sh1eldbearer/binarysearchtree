@@ -18,14 +18,15 @@ int main()
 	
 	// Simple testing array
 	// TODO: Function for dynamically sized arrays?
+
 	
-	//std::array<double,19> testValues = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15, 14.5, 16, 15.5, 17 };
-	std::array<double, 9> testValues = { 12,8,5,11,4,7,2,18,17 };
+	std::array<double,19> testValues = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15, 14.5, 16, 15.5, 17 };
+	//std::array<double, 9> testValues = { 12, 8, 5, 11, 4, 7, 2, 18, 17 };
+	//std::array<double, 10> testValues = { 2, 1, 3, 4, 5, 6, 7, 8, 9, 10 };
 	for (int count = 0; count < (int)testValues.size(); count++)
 	{
 		theBST.InsertValue(testValues[count]);
 	}
-	
 
 	while (runProgram)
 	{
@@ -36,7 +37,7 @@ int main()
 		std::cout << " 5. Show the maximum value stored in the tree" << std::endl;
 		std::cout << " 6. Rotate a node to the left" << std::endl;
 		std::cout << " 7. Rotate a node to the right" << std::endl;
-		std::cout << "44. Balance the tree" << std::endl;
+		//std::cout << "44. Balance the tree" << std::endl;
 		std::cout << "55. Display info about a specific node" << std::endl;
 		std::cout << "66. Display tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
@@ -91,7 +92,7 @@ int main()
 				}
 				break;
 			case 44:
-				theBST.BalanceTree();
+				//theBST.BalanceTree();
 				break;
 			case 55:
 				std::cout << "Enter the value of the node you wish to know about: ";
