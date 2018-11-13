@@ -15,7 +15,7 @@ private:
 	int nodeCount = 0;			// Counter for how many nodes are currently in the tree 
 	int spaceCount = 5;	// The number of spaces to add between each level of the tree when counting
 
-	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue, int height = 0)		// Inserts a new node 
+	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue, int height = -1)		// Inserts a new node 
 	{
 		// If the node being checked is null, creates a new node to occupy that spot on the tree
 		if (nodeToCheck == nullptr)
@@ -54,7 +54,7 @@ private:
 			{
 				rootPtr = nullptr;
 			}
-			else 
+			else
 			{
 				// This node is the left child of the previous node
 				if (nodePtr->GetParentPtr()->GetLeftChildPtr() == nodePtr)
@@ -76,7 +76,7 @@ private:
 		}
 		// Target node has only one child
 		else if ((nodePtr->GetLeftChildPtr() == nullptr && nodePtr->GetRightChildPtr() != nullptr) ||
-				 (nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() == nullptr))
+			(nodePtr->GetLeftChildPtr() != nullptr && nodePtr->GetRightChildPtr() == nullptr))
 		{
 			// If this node only has a left child
 			if (nodePtr->GetLeftChildPtr() != nullptr)
@@ -224,19 +224,33 @@ private:
 		}
 	}
 
-	void BalanceTree(BSNode<Type>* leftSubtreeRoot, BSNode<Type>* rightSubtreeRoot)
+	BSNode<Type>* CheckTreeHeight(BSNode<Type>* startingNode) // Checks the height of the left subtree
 	{
+		if (startingNode->GetLeftChildPtr() != NULL)
+		{
+			startingNode = CheckTreeHeight(startingNode->GetLeftChildPtr());
+		}
 
-	}
+		if (startingNode->GetRightChildPtr() != NULL)
+		{
+			startingNode = CheckTreeHeight(startingNode->GetRightChildPtr());
+		}
 
-	BSNode<Type>* CheckLeftHeight() // Checks the height of the 
-	{
-
-	}
-
-	BSNode<Type>* CheckRightHeight()
-	{
-
+		return startingNode;
+		/*
+		if (nodeToCheck->GetHeight() > nodeToCheck->GetLeftChildPtr()->GetHeight())
+		{
+			return CheckTreeHeight(nodeToCheck->GetLeftChildPtr());
+		}
+		else if (nodeToCheck->GetHeight() > nodeToCheck->GetRightChildPtr()->GetHeight())
+		{
+			return CheckTreeHeight(nodeToCheck->GetRightChildPtr());
+		}
+		else
+		{
+			return nodeToCheck;
+		}
+		*/
 	}
 public:
 	BSTree() {}		// Constructor
@@ -281,7 +295,7 @@ public:
 		// Creates a new node
 		if (rootPtr == nullptr)
 		{
-			rootPtr = InsertNode(rootPtr, nodeValue, 0);
+			rootPtr = InsertNode(rootPtr, nodeValue);
 		}
 		else
 		{
@@ -488,17 +502,6 @@ public:
 			}
 			return true;
 		}
-		// TODO: Delete this when I'm absolutely sure everything works right!
-		// Tree thinks it might be empty, but I didn't adjust the count properly somewhere
-		else if ((rootPtr == nullptr && nodeCount != 0) ||
-			(rootPtr != nullptr && nodeCount == 0))
-		{
-			std::cout << "The root pointer and node count variables don't match up." <<
-				" Not sure what happened, so here's a false TRUE value." << std::endl <<
-				"Go fix your code, goofball!" << std::endl << 
-				"Root address: " << rootPtr << "; Node count: " << nodeCount << std::endl;
-			return true;
-		}
 		else
 		{
 			return false;
@@ -508,6 +511,14 @@ public:
 	void PrintTree() // Prints the tree to the console (right branches are on top)
 	{ 
 		PrintNode(rootPtr, 0);
+	}
+
+	void BalanceTree()
+	{
+		BSNode<Type>* highestLeaf = CheckTreeHeight(rootPtr->GetLeftChildPtr());
+		std::cout << "Left subtree height: " << highestLeaf->GetHeight() << std::endl;
+		highestLeaf = CheckTreeHeight(rootPtr->GetRightChildPtr());
+		std::cout << "Right subtree height: " << highestLeaf->GetHeight() << std::endl;
 	}
 };
 

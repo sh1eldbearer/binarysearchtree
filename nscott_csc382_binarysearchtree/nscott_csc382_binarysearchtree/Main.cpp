@@ -36,6 +36,7 @@ int main()
 		std::cout << " 5. Show the maximum value stored in the tree" << std::endl;
 		std::cout << " 6. Rotate a node to the left" << std::endl;
 		std::cout << " 7. Rotate a node to the right" << std::endl;
+		std::cout << "44. Balance the tree" << std::endl;
 		std::cout << "55. Display info about a specific node" << std::endl;
 		std::cout << "66. Display tree" << std::endl;
 		std::cout << "99. Exit program" << std::endl;
@@ -88,6 +89,9 @@ int main()
 				{
 					theBST.RightNodeRotation(theBST.FindValue(userInput, false));
 				}
+				break;
+			case 44:
+				theBST.BalanceTree();
 				break;
 			case 55:
 				std::cout << "Enter the value of the node you wish to know about: ";
