@@ -15,12 +15,12 @@ private:
 	int nodeCount = 0;			// Counter for how many nodes are currently in the tree 
 	int spaceCount = 5;	// The number of spaces to add between each level of the tree when counting
 
-	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue)		// Inserts a new node 
+	BSNode<Type>* InsertNode(BSNode<Type>* nodeToCheck, Type newValue, int height = 0)		// Inserts a new node 
 	{
 		// If the node being checked is null, creates a new node to occupy that spot on the tree
 		if (nodeToCheck == nullptr)
 		{
-			BSNode<Type>* newNode = new BSNode<Type>(newValue);
+			BSNode<Type>* newNode = new BSNode<Type>(newValue, height);
 			return newNode;
 		}
 
@@ -28,16 +28,17 @@ private:
 		if (newValue < nodeToCheck->GetValue())
 		{
 			// Move down the tree along the left branch (runs recursively until an avaiable node is found)
-			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue));
+			nodeToCheck->SetLeftChildPtr(InsertNode(nodeToCheck->GetLeftChildPtr(), newValue, nodeToCheck->GetHeight()));
 			nodeToCheck->GetLeftChildPtr()->SetParentPtr(nodeToCheck);
 		}
 		else if (newValue > nodeToCheck->GetValue())
 		{
 			// Move down the tree along the right branch (runs recursively until an avaiable node is found)
-			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue));
+			nodeToCheck->SetRightChildPtr(InsertNode(nodeToCheck->GetRightChildPtr(), newValue, nodeToCheck->GetHeight()));
 			nodeToCheck->GetRightChildPtr()->SetParentPtr(nodeToCheck);
 		}
 
+		// Returns the next node to be checked (allows this function to run recursively until the node is created)
 		return nodeToCheck;
 	}
 
@@ -246,7 +247,7 @@ public:
 		// Creates a new node
 		if (rootPtr == nullptr)
 		{
-			rootPtr = InsertNode(rootPtr, nodeValue);
+			rootPtr = InsertNode(rootPtr, nodeValue, 0);
 		}
 		else
 		{
@@ -424,7 +425,15 @@ public:
 	void GetNodeDetails(BSNode<Type>* node)		// Shows the value stored in a node and its adjacent node addresses and stored values
 	{
 		std::cout << "Node value: " << node->GetValue() << std::endl;
-		std::cout << "Parent: " << node->GetParentPtr() << " (Value: " << node->GetParentPtr()->GetValue() << ")" << std::endl;
+		std::cout << "Node height: " << node->GetHeight() << std::endl;
+		if (node->GetParentPtr() != nullptr)
+		{
+			std::cout << "Parent: " << node->GetParentPtr() << " (Value: " << node->GetParentPtr()->GetValue() << ")" << std::endl;
+		}
+		else
+		{
+			std::cout << "This is the root node." << std::endl;
+		}
 		if (node->GetLeftChildPtr() != nullptr)
 		{
 			std::cout << "Left child: " << node->GetLeftChildPtr() << " (Value: " << node->GetLeftChildPtr()->GetValue() << ")" << std::endl;
@@ -471,6 +480,7 @@ public:
 			return false;
 		}
 	}
+
 	void PrintTree() // Prints the tree to the console (right branches are on top)
 	{ 
 		PrintNode(rootPtr, 0);
