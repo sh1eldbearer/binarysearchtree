@@ -5,147 +5,123 @@
 #include "BSTree.h"
 
 // See function definitions for descriptions
-template<typename Type> bool GetUserInput(Type* userInput);
-bool TestUserInput();
+template<typename Type> bool TestUserInput(Type* userInput, bool clearScreen = false);
 template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount);
+
 int main()
 {
-	BSTree<double> theBST;
-	bool(runProgram) = true;
+	BSTree<float> theBST;
+	bool runProgram = true;
 	int menuInput;
-	double userInput;
+	float userInput;
 
 	// Simple testing arrays	
-	std::array<double, 19> testArray = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15, 14.5, 16, 15.5, 17 };
-	std::array<double, 9> testArray2 = { 12, 8, 5, 11, 4, 7, 2, 18, 17 };
-	std::array<double, 10> testArray3 = { 2, 1, 3, 4, 5, 6, 7, 8, 9, 10 };
-	
+	std::array<float, 19> testArray1 = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15, 14.5, 16, 15.5, 17 };
+	std::array<float, 9> testArray2 = { 12, 8, 5, 11, 4, 7, 2, 18, 17 };
+	std::array<float, 10> testArray3 = { 2, 1, 3, 4, 5, 6, 7, 8, 9, 10 };
+
 	while (runProgram)
 	{
-		std::cout << "--- BINARY SEARCH TREE ---" << std::endl;
-		std::cout << " 1. Add a new node" << std::endl;
-		std::cout << " 2. Find a value stored in the tree" << std::endl;
-		std::cout << " 3. Show the minimum value stored in the tree" << std::endl;
-		std::cout << " 4. Show the maximum value stored in the tree" << std::endl;
-		std::cout << " 5. Display info about a specific node" << std::endl;
-		std::cout << " 6. Display tree (WARNING: Very tall trees will be difficult to read!)" << std::endl;
-		std::cout << " 8. Delete a node from the tree" << std::endl;
-		std::cout << " 9. Delete ALL the nodes from the tree" << std::endl;
-		std::cout << "11. Add test array 1 to the BST (erases all other data)" << std::endl;
-		std::cout << "12. Add test array 2 to the BST (erases all other data)" << std::endl;
-		std::cout << "13. Add test array 3 to the BST (erases all other data)" << std::endl;
-		std::cout << "16. Add 100 nodes to the BST (erases all other data)" << std::endl;
-		std::cout << "17. Add 1000 nodes to the BST (erases all other data)" << std::endl;
-		//std::cout << "18. Add 10000 nodes to the BST (erases all other data)" << std::endl;
-		//std::cout << "19. Add 100000 nodes to the BST (erases all other data)" << std::endl;
-		std::cout << "99. Exit program" << std::endl;
-		std::cout << std::endl;
+		std::cout << "BINARY SEARCH TREE PROGRAM\n\n"
+			<< " 1. Insert a new node\n" 
 
-		std::cout << "Your choice: ";
-		if (GetUserInput(&menuInput))
+			<< "\n11. Find a value in the tree"
+			<< "\n12. Find the minimum value stored in the tree"
+			<< "\n13. Find the maximum value stored in the tree\n"
+
+			<< "\n66. Print the tree\n"
+
+			<< "\n71. Insert test array 1 into the tree"
+			<< "\n72. Insert test array 2 into the tree"
+			<< "\n73. Insert test array 3 into the tree\n"
+
+			<< "\n99. Exit program"
+			
+			<< "\n\nYour choice, please: ";
+
+		if (TestUserInput(&menuInput, true))
 		{
 			switch (menuInput)
 			{
-			case 1:		// Add a new node
-				std::cout << "Enter the node value: ";
-				if (GetUserInput(&userInput))
+			case 1:
+				std::cout << "Enter value: ";
+				if (TestUserInput(&userInput))
 				{
-					theBST.InsertValue(userInput);
+					theBST.Insert(userInput);
 				}
 				break;
-			case 2:		// Find a value stored in the tree
-				std::cout << "Enter the value you want to find: ";
-				if (GetUserInput(&userInput))
+			case 11:
+				std::cout << "Enter the value you wish to find: ";
+				if (TestUserInput(&userInput))
 				{
-					theBST.FindValue(userInput);
+					theBST.Find(userInput);
 				}
 				break;
-			case 3:		// Show the minimum value stored in the tree
-				std::cout << "The smallest value stored in the tree is " <<
-					theBST.MinValue() << std::endl;
+			case 12:
+				theBST.Minimum();
 				break;
-			case 4:		// Show the maximum value stored in the tree
-				std::cout << "The smallest value stored in the tree is " <<
-					theBST.MaxValue() << std::endl;
+			case 13:
+				theBST.Maximum();
 				break;
-			case 5:		// Display info about a specific node
-				std::cout << "Enter the value of the node you wish to know more about: ";
-				if (GetUserInput(&userInput))
+			case 66:
+				theBST.Print();
+				break;
+			case 71:
+				for (int count = 0; count < testArray1.size(); count++)
 				{
-					theBST.GetNodeDetails(theBST.FindValue(userInput, false));
+					theBST.Insert(testArray1[count]);
 				}
 				break;
-			case 6:		// Display tree
-				theBST.PrintTree();
-				break;
-			case 8:		// Delete a node from the tree
-				std::cout << "Enter the value you wish to delete: ";
-				if (GetUserInput(&userInput))
-				{
-					theBST.DeleteValue(userInput);
-				}
-				break;
-			case 9:		// Delete ALL the nodes from the tree
-				theBST.DeleteAllValues();
-				break;
-			case 11:	// Add test array 1 to the BST
-				theBST.DeleteAllValues(false);
-				for (int count = 0; count < (int)testArray.size(); count++)
-				{
-					theBST.InsertValue(testArray[count]);
-				}
-				break;
-			case 12:	// Add test array 2 to the BST
-				theBST.DeleteAllValues(false);
+			case 72:
 				for (int count = 0; count < (int)testArray2.size(); count++)
 				{
-					theBST.InsertValue(testArray2[count]);
+					theBST.Insert(testArray2[count]);
 				}
 				break;
-			case 13:	// Add test array 3 to the BST
-				theBST.DeleteAllValues(false);
+			case 73:
 				for (int count = 0; count < (int)testArray3.size(); count++)
 				{
-					theBST.InsertValue(testArray3[count]);
+					theBST.Insert(testArray3[count]);
 				}
 				break;
-			case 16:	// Add 100 nodes to the BST
+			case 81:	// Add 100 nodes to the BST
 				AddNodes(&theBST, 100);
 				break;
-			case 17:	// Add 1000 nodes to the BST
+			case 82:	// Add 1000 nodes to the BST
 				AddNodes(&theBST, 1000);
 				break;
-			case 18:	// Add 10000 nodes to the BST
+			case 83:	// Add 10000 nodes to the BST
 				AddNodes(&theBST, 10000);
 				break;
-			case 19:	// Add 100000 nodes to the BST
+			case 84:	// Add 100000 nodes to the BST
 				AddNodes(&theBST, 100000);
 				break;
-			case 99:	// Exit program
+			case 99:
 				runProgram = false;
 				break;
 			default:
-				std::cout << "Function not implemented." << std::endl;
+				std::cout << "Sorry, can't do that.\n";
+				break;
 			}
-			std::cout << std::endl;
 		}
 	}
-	
-	return 0; // Exit program
 }
 
 // Gets user input
-template<typename Type> bool GetUserInput(Type* userInput) 
-{
-	std::cin >> *userInput;
-
-	return TestUserInput();
-}
-
-// Tests cin for failure and clears cin's flags and input buffer afterward
-bool TestUserInput()
+template<typename Type> bool TestUserInput(Type* userInput, bool clearScreen) 
 {
 	bool failure;
+
+	std::cin >> *userInput;
+
+	if (clearScreen)
+	{
+		system("cls");
+	}
+	else
+	{
+		std::cout << std::endl;
+	}
 
 	// Checks to see if there were any problems getting the user's input
 	failure = std::cin.fail();
@@ -166,13 +142,14 @@ bool TestUserInput()
 // Adds a number of nodes to the BST
 template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount)
 {
+	//theBST->DeleteAllValues(false);
+	std::cout << "Working...\n";
 	clock_t runTimer;
-	theBST->DeleteAllValues(false);
 	runTimer = clock();
 	for (int count = 0; count < nodeCount; count++)
 	{
-		theBST->InsertValue(count);
+		theBST->Insert((Type)count, false);
 	}
 	runTimer = clock() - runTimer;
-	std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds)." << std::endl;
+	std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds).\n\n";
 }

@@ -5,12 +5,20 @@ template<typename Type>
 class BSNode
 {
 private:
-	Type value;									// The value held by this node
-	int height = -1;									// The height this node resides at in the tree
-	BSNode<Type>* parentPtr = nullptr;			// Pointer to the parent node of this node
-	BSNode<Type>* leftChildPtr = nullptr;		// Pointer to the left child node of this node
-	BSNode<Type>* rightChildPtr = nullptr;		// Pointer to the right child node of this node
+	Type value;	// The value held by this node
+	int height;	// The height this node resides at in the tree
+	BSNode<Type>* parent = nullptr;	// Pointer to the parent node of this node
+	BSNode<Type>* leftChild = nullptr;	// Pointer to the left child node of this node
+	BSNode<Type>* rightChild = nullptr;	// Pointer to the right child node of this node
 public:
+	/// <summary>
+	/// Default constructor
+	/// </summary>
+	/// <param name="initValue">The initial value to be stored in this node. 
+	/// Defaults to NULL.</param>
+	/// <param name="height">The height this node resides at in the tree. 
+	Defaults to 0.</param>
+	/// <returns></returns>
 	BSNode(Type initValue = NULL, int height = -1) : value(initValue), height(height + 1) { }		// Constructor
 
 	Type GetValue()		// Returns the value stored in this node
@@ -18,15 +26,9 @@ public:
 		return value;
 	}
 
-	template<typename Type>
 	void SetValue(Type newValue)	// Changes the value stored in this node
 	{
 		value = newValue;
-	}
-
-	BSNode<Type>* GetParentPtr()	// Returns the memory address of this node's parent
-	{
-		return parentPtr;
 	}
 
 	int GetHeight()		// Returns the height this node resides at in the tree
@@ -34,34 +36,39 @@ public:
 		return height;
 	}
 
-	void SetHeight(int newValue)		// Changes the height this node resides at in the tree
+	void SetHeight(int newHeight)		// Changes the height this node resides at in the tree
 	{
-		height = newValue;
+		height = newHeight;
 	}
 
-	void SetParentPtr(BSNode<Type>* newPtr)		// Changes which node is this node's parent
+	BSNode<Type>* GetParent()	// Returns the memory address of this node's parent
 	{
-		parentPtr = newPtr;
+		return parent;
 	}
 
-	BSNode<Type>* GetLeftChildPtr()		// Returns the memory address of this node's left child
+	void SetParent(BSNode<Type>* newPtr)		// Changes which node is this node's parent
 	{
-		return leftChildPtr;
+		parent = newPtr;
 	}
 
-	void SetLeftChildPtr(BSNode<Type>* newPtr)		// Changes which node is this node's left child
+	BSNode<Type>* GetLeftChild()		// Returns the memory address of this node's left child
 	{
-		leftChildPtr = newPtr;
+		return leftChild;
 	}
 
-	BSNode<Type>* GetRightChildPtr()	// Returns the memory address of this node's right child
+	void SetLeftChild(BSNode<Type>* newPtr)		// Changes which node is this node's left child
 	{
-		return rightChildPtr;
+		leftChild = newPtr;
 	}
 
-	void SetRightChildPtr(BSNode<Type>* newPtr)		// Changes which node is this node's left child
+	BSNode<Type>* GetRightChild()	// Returns the memory address of this node's right child
 	{
-		rightChildPtr = newPtr;
+		return rightChild;
+	}
+
+	void SetRightChild(BSNode<Type>* newPtr)		// Changes which node is this node's left child
+	{
+		rightChild = newPtr;
 	}
 };
 
