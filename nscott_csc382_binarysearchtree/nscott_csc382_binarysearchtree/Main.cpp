@@ -23,8 +23,7 @@ int main()
 	while (runProgram)
 	{
 		std::cout << "BINARY SEARCH TREE PROGRAM\n\n"
-			<< " 1. Insert new value into tree"
-			<< "\n 6. Delete value from the tree\n"
+			<< " 1. Insert a new node\n" 
 
 			<< "\n11. Find a value in the tree"
 			<< "\n12. Find the minimum value stored in the tree"
@@ -45,17 +44,10 @@ int main()
 			switch (menuInput)
 			{
 			case 1:
-				std::cout << "Enter the value you wish to insert: ";
+				std::cout << "Enter value: ";
 				if (TestUserInput(&userInput))
 				{
 					theBST.Insert(userInput);
-				}
-				break;
-			case 6:
-				std::cout << "Enter the value you wish to delete: ";
-				if (TestUserInput(&userInput))
-				{
-					theBST.Delete(userInput);
 				}
 				break;
 			case 11:
