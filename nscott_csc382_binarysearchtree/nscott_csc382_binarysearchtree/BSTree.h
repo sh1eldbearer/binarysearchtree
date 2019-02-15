@@ -84,6 +84,29 @@ private:
 		PrintNode(node->GetLeftChild(), space);
 	}
 
+	/// <summary>
+	/// Swaps two key values between two different nodes.
+	/// </summary>
+	/// <param name="node1">A node that will be switching key values with node2.</param>
+	/// <param name="node2">A node that will be switching key values with node1.</param>
+	void SwapValues(BSNode<Type>* node1, BSNode<Type>* node2)
+	{
+		if (node1 == node2)
+		{
+			std::cout << "Cannot switch values between the same node.\n\n";
+			return;
+		}
+		else if (node1 == nullptr || node2 == nullptr)
+		{
+			std::cout << "Cannot switch the value of a null pointer.\n\n";
+			return;
+		}
+
+		node1->SetValue(node1->GetValue() + node2->GetValue());
+		node2->SetValue(node1->GetValue() - node2->GetValue());
+		node1->SetValue(node1->GetValue() - node2->GetValue());
+	}
+
 public:
 	/// <summary>
 	/// Default constructor.
