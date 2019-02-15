@@ -130,7 +130,7 @@ int main()
 				runProgram = false;
 				break;
 			default:	// Invalid entry
-				std::cout << "Sorry, can't do that.\n";
+				std::cout << "Sorry, can't do that.\n\n";
 				break;
 			}
 		}

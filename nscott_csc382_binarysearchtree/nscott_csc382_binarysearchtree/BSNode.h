@@ -20,11 +20,11 @@ public:
 	/// <summary>
 	/// Default constructor
 	/// </summary>
-	/// <param name="initValue">The initial value to be stored in this node. 
-	/// Defaults to NULL.</param>
-	/// <param name="height">The height this node resides at in the tree. 
-	/// Defaults to 0.</param>
-	BSNode(Type initValue = NULL, int height = -1) : value(initValue), height(height + 1) { }		// Constructor
+	BSNode()
+	{ 
+		value = NULL;
+		height = -1;
+	}
 
 	/// <summary>
 	/// Accessor for the value stored in this node.

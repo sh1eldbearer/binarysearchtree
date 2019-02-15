@@ -182,6 +182,7 @@ public:
 	{
 		BSNode<Type>* newNode = new BSNode<Type>();
 		BSNode<Type>* nodeToCheck = root;
+		int height = 0;
 
 		// Create a new node
 		while (newNode->GetValue() == NULL)
@@ -190,12 +191,13 @@ public:
 			if (nodeToCheck == nullptr)
 			{
 				newNode->SetValue(newValue);
+				newNode->SetHeight(height);
 				// If the tree has no root node, set the new node as the root
 				if (IsEmpty())
 				{
 					root = newNode;
 				}
-				// If the tree does have a root node, assigns this node as a child of the parent node
+				// If the tree does have a root node, assigns this node as a child of its parent node
 				else
 				{
 					if (newValue > newNode->GetParent()->GetValue())
@@ -234,12 +236,14 @@ public:
 			{
 				newNode->SetParent(nodeToCheck);
 				nodeToCheck = nodeToCheck->GetLeftChild();
+				height++;
 			}
 			// Larger values get inserted further down the right branch
 			else if (newValue > nodeToCheck->GetValue())
 			{
 				newNode->SetParent(nodeToCheck);
 				nodeToCheck = nodeToCheck->GetRightChild();
+				height++;
 			}
 			// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 			else
@@ -490,6 +494,7 @@ public:
 
 		// Print the contents of the tree
 		PrintNode(root, 0);
+		std::cout << "\n";
 	}
 };
 
