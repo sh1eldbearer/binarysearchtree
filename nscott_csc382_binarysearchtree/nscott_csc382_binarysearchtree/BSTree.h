@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "BSNode.h"
-const int SPACE_COUNT = 3;	// The number of spaces to add between each level of the tree when counting in printing function
+const int SPACE_COUNT = 5;	// The number of spaces to add between each level of the tree when counting in printing function
 
 	/// <summary>
 	/// 
@@ -102,6 +102,7 @@ private:
 			return;
 		}
 
+		// Swaps the values in place
 		node1->SetValue(node1->GetValue() + node2->GetValue());
 		node2->SetValue(node1->GetValue() - node2->GetValue());
 		node1->SetValue(node1->GetValue() - node2->GetValue());
@@ -333,17 +334,111 @@ public:
 	}
 
 	/// <summary>
+	/// Deletes a node from the tree.
+	/// </summary>
+	/// <param name="delValue">The key value of the node to be deleted.</param>
+	void Delete(Type delValue)
+	{
+		BSNode<Type>* delNode = Find(delValue, false);
+
+		// If the value isn't found in the tree, display an error message and exit function
+		if (delNode == nullptr)
+		{
+			std::cout << "Value \"" << delValue << "\" not found in the tree.\n\n";
+			return;
+		}
+		// The node is a leaf (has no children)
+		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() == nullptr)
+		{
+			// The node is the root node and the only node in the tree
+			if (delNode == root)
+			{
+				root = nullptr;
+			}
+			else if (delNode == delNode->GetParent()->GetLeftChild())
+			{
+				delNode->GetParent()->SetLeftChild(nullptr);
+			}
+			else if (delNode == delNode->GetParent()->GetRightChild())
+			{
+				delNode->GetParent()->SetRightChild(nullptr);
+			}
+		}
+		// The node has two children
+		else if (delNode->GetLeftChild() != nullptr && delNode->GetRightChild() != nullptr)
+		{
+			// The successor node is the minimum value in the delNode's right subtree
+			BSNode<Type>* successor = MinNode(delNode->GetRightChild());
+
+			// The node being deleted has no left subtree - bring the right child up one level
+			if (successor == delNode->GetRightChild())
+			{
+				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
+				delNode->GetRightChild()->SetParent(delNode->GetParent());
+				delNode->GetRightChild()->SetLeftChild(delNode->GetLeftChild());
+			}
+			/* Swaps the values of the delNode and succcessor node, 
+			 * and sets the successor node as the node to be deleted */
+			else
+			{
+				SwapValues(delNode, successor);
+				successor->GetParent()->SetLeftChild(nullptr);
+				delNode = successor;
+			}
+		}
+		// The node has only has a single child
+		else if (delNode->GetLeftChild() != nullptr && delNode->GetRightChild() == nullptr)
+		{
+			// Link the deletion node's parent to the deletion node's left child
+			if (delNode == delNode->GetParent()->GetLeftChild())
+			{
+				delNode->GetParent()->SetLeftChild(delNode->GetLeftChild());
+				delNode->GetLeftChild()->SetParent(delNode->GetParent());
+			}
+			else if (delNode == delNode->GetParent()->GetRightChild())
+			{
+				delNode->GetParent()->SetRightChild(delNode->GetLeftChild());
+				delNode->GetLeftChild()->SetParent(delNode->GetParent());
+			}
+		}
+		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() != nullptr)
+		{
+			// Link the deletion node's parent to the deletion node's right child
+			if (delNode == delNode->GetParent()->GetLeftChild())
+			{
+				delNode->GetParent()->SetLeftChild(delNode->GetRightChild());
+				delNode->GetRightChild()->SetParent(delNode->GetParent());
+			}
+			else if (delNode == delNode->GetParent()->GetRightChild())
+			{
+				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
+				delNode->GetRightChild()->SetParent(delNode->GetParent());
+			}
+		}
+		// Unexpected behavior (if this ever shows up in the console window, I screwed up)
+		else
+		{
+			std::cout << "Unexpected condition.\n\n";
+		}
+
+		delete delNode;
+	}
+
+	/// <summary>
 	/// Prints the tree to the console (right branches are on top).
 	/// </summary>
 	void Print() 
 	{
-		if (root == nullptr)
+		// If the tree is empty, display an error message and exit the function
+		if (IsEmpty(true))
 		{
 			return;
 		}
+
+		// Print the contents of the tree
 		PrintNode(root, 0);
 	}
 };
 
-#endif // !BSTREE_H
+#endif
 
