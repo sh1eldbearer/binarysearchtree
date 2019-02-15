@@ -108,6 +108,27 @@ private:
 		node1->SetValue(node1->GetValue() - node2->GetValue());
 	}
 
+
+	/// <summary>
+	/// Deletes a node, and all nodes within that node's subtrees, from the tree.
+	/// </summary>
+	/// <param name="delNode">The root node of the tree (or subtree) to be deleted.</param>
+	void DeleteNodes(BSNode<Type>* delNode)
+	{
+		// If the node being checked is null, immediately exit the function
+		if (delNode == nullptr)
+		{
+			return;
+		}
+
+		// Does a depth-first, post-ordered search through tree for nodes to delete
+		DeleteNodes(delNode->GetLeftChild());
+		DeleteNodes(delNode->GetRightChild());
+
+		// Once the search is complete, deletes this node
+		delete delNode;
+	}
+
 public:
 	/// <summary>
 	/// Default constructor.
@@ -337,14 +358,18 @@ public:
 	/// Deletes a node from the tree.
 	/// </summary>
 	/// <param name="delValue">The key value of the node to be deleted.</param>
-	void Delete(Type delValue)
+	/// <param name="verbose">Whether or not to output status messages to the console.</param>
+	void Delete(Type delValue, bool verbose = true)
 	{
 		BSNode<Type>* delNode = Find(delValue, false);
 
 		// If the value isn't found in the tree, display an error message and exit function
 		if (delNode == nullptr)
 		{
-			std::cout << "Value \"" << delValue << "\" not found in the tree.\n\n";
+			if (verbose)
+			{
+				std::cout << "Value \"" << delValue << "\" not found in the tree.\n\n";
+			}
 			return;
 		}
 		// The node is a leaf (has no children)
@@ -422,6 +447,34 @@ public:
 		}
 
 		delete delNode;
+
+		if (verbose)
+		{
+			std::cout << "Value \"" << delValue << "\" deleted from the tree.\n\n";
+		}
+	}
+
+	/// <summary>
+	/// Deletes all the nodes from the tree (or subtree).
+	/// </summary>
+	/// <param name="verbose">Whether or not to output status messages to the console.</param>
+	void DeleteAll(bool verbose = true)
+	{
+		// Displays a error message and exits the function if the tree is empty
+		if (IsEmpty(verbose))
+		{
+			return;
+		}
+
+		DeleteNodes(root);
+
+		// Gotta prevent those null reference exceptions
+		root = nullptr;
+
+		if (verbose)
+		{
+			std::cout << "All nodes deleted from the tree.\n\n";
+		}
 	}
 
 	/// <summary>

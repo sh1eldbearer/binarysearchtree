@@ -24,7 +24,8 @@ int main()
 	{
 		std::cout << "BINARY SEARCH TREE PROGRAM\n\n"
 			<< " 1. Insert new value into tree"
-			<< "\n 6. Delete value from the tree\n"
+			<< "\n 6. Delete value from the tree"
+			<< "\n 7. Delete all values from the tree\n"
 
 			<< "\n11. Find a value in the tree"
 			<< "\n12. Find the minimum value stored in the tree"
@@ -32,9 +33,16 @@ int main()
 
 			<< "\n66. Print the tree\n"
 
+			<< "\nWARNING: OPTIONS 71-84 WILL DELETE ALL VALUES IN THE TREE BEFORE ADDING NEW VALUES"
 			<< "\n71. Insert test array 1 into the tree"
 			<< "\n72. Insert test array 2 into the tree"
 			<< "\n73. Insert test array 3 into the tree\n"
+
+			<< "\n81. Insert 100 values into the tree"
+			<< "\n82. Insert 1000 values into the tree"
+			<< "\nWARNING: OPTIONS 83 & 84 ARE NON-OPTIMIZED, MAY TAKE A VERY LONG TIME, AND MAY THROW ERRORS"
+			<< "\n83. Insert 10000 values into the tree"
+			<< "\n84. Insert 100000 values into the tree\n"
 
 			<< "\n99. Exit program"
 			
@@ -44,49 +52,55 @@ int main()
 		{
 			switch (menuInput)
 			{
-			case 1:
+			case 1:		// Insert a value
 				std::cout << "Enter the value you wish to insert: ";
 				if (TestUserInput(&userInput))
 				{
 					theBST.Insert(userInput);
 				}
 				break;
-			case 6:
+			case 6:		// Delete a value
 				std::cout << "Enter the value you wish to delete: ";
 				if (TestUserInput(&userInput))
 				{
 					theBST.Delete(userInput);
 				}
 				break;
-			case 11:
+			case 7:		// Delete all values
+				theBST.DeleteAll();
+				break;
+			case 11:	// Find a value
 				std::cout << "Enter the value you wish to find: ";
 				if (TestUserInput(&userInput))
 				{
 					theBST.Find(userInput);
 				}
 				break;
-			case 12:
+			case 12:	// Find the minimum value
 				theBST.Minimum();
 				break;
-			case 13:
+			case 13:	// Find the maximum value
 				theBST.Maximum();
 				break;
-			case 66:
+			case 66:	// Print the tree to the console
 				theBST.Print();
 				break;
-			case 71:
+			case 71:	// Insert test array 1
+				theBST.DeleteAll(false);
 				for (int count = 0; count < testArray1.size(); count++)
 				{
 					theBST.Insert(testArray1[count]);
 				}
 				break;
-			case 72:
+			case 72:	// Insert test array 2
+				theBST.DeleteAll(false);
 				for (int count = 0; count < (int)testArray2.size(); count++)
 				{
 					theBST.Insert(testArray2[count]);
 				}
 				break;
-			case 73:
+			case 73:	// Insert test array 3
+				theBST.DeleteAll(false);
 				for (int count = 0; count < (int)testArray3.size(); count++)
 				{
 					theBST.Insert(testArray3[count]);
@@ -100,14 +114,22 @@ int main()
 				break;
 			case 83:	// Add 10000 nodes to the BST
 				AddNodes(&theBST, 10000);
+				std::cout << "Exiting program, because attempting to delete all 10000\n" <<
+					"nodes will cause a stack overflow error due to non-optimization.\n\n";
+				system("pause");
+				runProgram = false;
 				break;
 			case 84:	// Add 100000 nodes to the BST
 				AddNodes(&theBST, 100000);
-				break;
-			case 99:
+				std::cout << "Exiting program, because attempting to delete all 100000\n" <<
+					"nodes will cause a stack overflow error due to non-optimization.\n\n";
+				system("pause");
 				runProgram = false;
 				break;
-			default:
+			case 99:	// Exit the program
+				runProgram = false;
+				break;
+			default:	// Invalid entry
 				std::cout << "Sorry, can't do that.\n";
 				break;
 			}
@@ -150,7 +172,7 @@ template<typename Type> bool TestUserInput(Type* userInput, bool clearScreen)
 // Adds a number of nodes to the BST
 template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount)
 {
-	//theBST->DeleteAllValues(false);
+	theBST->DeleteAll(false);
 	std::cout << "Working...\n";
 	clock_t runTimer;
 	runTimer = clock();
