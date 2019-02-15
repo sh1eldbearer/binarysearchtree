@@ -1,35 +1,37 @@
 #ifndef BSNODE_H
 #define BSNODE_H
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="newValue"></param>
-/// <returns></returns>
-
 template<typename Type>
 class BSNode
 {
 private:
 	Type value;	// The value held by this node
 	int height;	// The height this node resides at in the tree
-	BSNode<Type>* parent = nullptr;	// Pointer to the parent node of this node
-	BSNode<Type>* leftChild = nullptr;	// Pointer to the left child node of this node
-	BSNode<Type>* rightChild = nullptr;	// Pointer to the right child node of this node
+	BSNode<Type>* parent;	// A pointer to the parent node of this node
+	BSNode<Type>* leftChild;	// A pointer to the left child node of this node
+	BSNode<Type>* rightChild;	// A pointer to the right child node of this node
 public:
 	/// <summary>
-	/// Default constructor
+	/// Default constructor.
 	/// </summary>
 	BSNode()
 	{ 
 		value = NULL;
 		height = -1;
+		parent = nullptr;
+		leftChild = nullptr;
+		rightChild = nullptr;
 	}
 
 	/// <summary>
-	/// Accessor for the value stored in this node.
+	/// Default destructor.
 	/// </summary>
-	/// <returns>The value stored in this node.</returns>
+	~BSNode() { }
+
+	/// <summary>
+	/// Accessor for the key value stored in this node.
+	/// </summary>
+	/// <returns>The key value stored in this node.</returns>
 	Type GetValue()
 	{
 		return value;
@@ -75,7 +77,7 @@ public:
 	/// <summary>
 	/// Changes which node is this node's parent node.
 	/// </summary>
-	/// <param name="newValue">The new pointer to be set as this node's parent.</param>
+	/// <param name="newValue">The pointer to be set as this node's parent.</param>
 	void SetParent(BSNode<Type>* newPtr)
 	{
 		parent = newPtr;
@@ -93,7 +95,7 @@ public:
 	/// <summary>
 	/// Changes which node is this node's left child node.
 	/// </summary>
-	/// <param name="newValue">The new pointer to be set as this node's left child node.</param>
+	/// <param name="newValue">The pointer to be set as this node's left child node.</param>
 	void SetLeftChild(BSNode<Type>* newPtr)
 	{
 		leftChild = newPtr;
@@ -111,7 +113,7 @@ public:
 	/// <summary>
 	/// Changes which node is this node's right child node.
 	/// </summary>
-	/// <param name="newValue">The new pointer to be set as this node's right child node.</param>
+	/// <param name="newValue">The pointer to be set as this node's right child node.</param>
 	void SetRightChild(BSNode<Type>* newPtr)
 	{
 		rightChild = newPtr;

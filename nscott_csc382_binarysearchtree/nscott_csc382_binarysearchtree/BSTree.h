@@ -15,7 +15,7 @@ const int SPACE_COUNT = 5;	// The number of spaces to add between each level of 
 template<typename Type> class BSTree
 {
 private:
-	BSNode<Type>* root;
+	BSNode<Type>* root;	// A pointer to the root (first) node of this tree
 
 	/// <summary>
 	/// Finds the node in the tree (or subtree) containing the minimum (smallest) value.
@@ -56,6 +56,10 @@ private:
 	/// <summary>
 	/// Prints the contents of a node to the console when called by Print().
 	/// </summary>
+	/// <param name="node">The node whose value will be printed to the console.</param>
+	/// <param name="space">The number of spaces to be inserted before printing the node's 
+	/// value. An call to this function from outside PrintNode should use the SPACE_COUNT 
+	/// global value in this file.</param>
 	void PrintNode(BSNode<Type> *node, int space)
 	{
 		// If the current node is null, don't print anything
@@ -105,7 +109,6 @@ private:
 		node2->SetValue(node1->GetValue() - node2->GetValue());
 		node1->SetValue(node1->GetValue() - node2->GetValue());
 	}
-
 
 	/// <summary>
 	/// Deletes a node, and all nodes within that node's subtrees, from the tree.
@@ -169,7 +172,10 @@ public:
 	/// <summary>
 	/// Default destructor.
 	/// </summary>
-	~BSTree() { }
+	~BSTree() 
+	{ 
+		DeleteAll();
+	}
 
 	/// <summary>
 	/// Accessor for the pointer to the root node.
@@ -186,7 +192,7 @@ public:
 	/// </summary>
 	/// <returns>If the tree is empty, returns true. Otherwise, returns false.</returns>
 	/// <param name="verbose">Whether or not to output status messages to the console.</param>
-	bool IsEmpty(bool verbose = false)
+	bool IsEmpty(bool verbose = true)
 	{
 		// Tree is empty
 		if (root == nullptr)
@@ -221,7 +227,7 @@ public:
 				newNode->SetValue(newValue);
 				newNode->SetHeight(height);
 				// If the tree has no root node, set the new node as the root
-				if (IsEmpty())
+				if (IsEmpty(false))
 				{
 					root = newNode;
 				}
@@ -289,7 +295,7 @@ public:
 	/// <param name="valueToFind">The value to attempt to find in the tree.</param>
 	/// <param name="verbose">Whether or not to output status messages to the console.</param>
 	/// <returns>If the value is found, returns a pointer to the node object where 
-	/// the value is stored. Otherwise, returns a null pointer.</returns>
+	/// the value is stored. Otherwise, returns a nullptr.</returns>
 	BSNode<Type>* Find(Type valueToFind, bool verbose = true)
 	{
 		// If there are no nodes in the tree, returns nullptr and displays an error message
@@ -349,7 +355,6 @@ public:
 	/// <summary>
 	/// Finds the minimum (smallest) value stored in the tree.
 	/// </summary>
-	/// <param name="valueToFind">The value to search for within the tree.</param>
 	/// <param name="verbose">Whether or not to output status messages to the console.</param>
 	/// <returns>The minimum (smallest) value stored in the tree.</returns>
 	Type Minimum(bool verbose = true)
@@ -369,7 +374,6 @@ public:
 	/// <summary>
 	/// Finds the maximum (largest) value stored in the tree.
 	/// </summary>
-	/// <param name="valueToFind">The value to search for within the tree.</param>
 	/// <param name="verbose">Whether or not to output status messages to the console.</param>
 	/// <returns>The maximum (largest) value stored in the tree.</returns>
 	Type Maximum(bool verbose = true)
@@ -490,7 +494,7 @@ public:
 	}
 
 	/// <summary>
-	/// Deletes all the nodes from the tree (or subtree).
+	/// Deletes all the nodes from the tree.
 	/// </summary>
 	/// <param name="verbose">Whether or not to output status messages to the console.</param>
 	void DeleteAll(bool verbose = true)
@@ -513,7 +517,7 @@ public:
 	}
 
 	/// <summary>
-	/// Prints the tree to the console (right branches are on top).
+	/// Prints the tree to the console for visual debugging.
 	/// </summary>
 	void Print() 
 	{
