@@ -16,8 +16,6 @@ template<typename Type> class BSTree
 {
 private:
 	BSNode<Type>* root;
-	
-	// TODO: Private find function that takes a node instead of a value?
 
 	/// <summary>
 	/// Finds the node in the tree (or subtree) containing the minimum (smallest) value.
@@ -78,7 +76,7 @@ private:
 		{
 			std::cout << " ";
 		}
-		std::cout << node->GetValue() << std::endl;
+		std::cout << node->GetValue() << "\n";
 
 		// Attempts to print the left child last 
 		PrintNode(node->GetLeftChild(), space);
@@ -127,6 +125,36 @@ private:
 
 		// Once the search is complete, deletes this node
 		delete delNode;
+	}
+
+	/// <summary>
+	/// Updates the height value of each node in the subtree under the starting node.
+	/// </summary>
+	/// <param name="startNode">The root of the tree (or subtree) to update the heights of.</param>
+	void UpdateNodeHeights(BSNode<Type>* startNode)
+	{
+		// If the node being checked is null, immediately exit the function
+		if (startNode == nullptr)
+		{
+			return;
+		}
+
+		// Use the height of the starting node as a starting height value
+		int height = startNode->GetHeight();
+
+		// Do a breadth-first search through the tree
+		if (startNode->GetLeftChild() != nullptr)
+		{
+			// Adjust the height and recursively search for child nodes
+			startNode->GetLeftChild()->SetHeight(height + 1);
+			UpdateNodeHeights(startNode->GetLeftChild());
+		}
+		if (startNode->GetRightChild() != nullptr)
+		{
+			// Adjust the height and recursively search for child nodes
+			startNode->GetRightChild()->SetHeight(height + 1);
+			UpdateNodeHeights(startNode->GetRightChild());
+		}
 	}
 
 public:
@@ -405,6 +433,7 @@ public:
 				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
 				delNode->GetRightChild()->SetParent(delNode->GetParent());
 				delNode->GetRightChild()->SetLeftChild(delNode->GetLeftChild());
+				UpdateNodeHeights(delNode->GetParent());
 			}
 			/* Swaps the values of the delNode and succcessor node, 
 			 * and sets the successor node as the node to be deleted */
@@ -429,6 +458,7 @@ public:
 				delNode->GetParent()->SetRightChild(delNode->GetLeftChild());
 				delNode->GetLeftChild()->SetParent(delNode->GetParent());
 			}
+			UpdateNodeHeights(delNode->GetParent());
 		}
 		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() != nullptr)
 		{
@@ -443,6 +473,7 @@ public:
 				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
 				delNode->GetRightChild()->SetParent(delNode->GetParent());
 			}
+			UpdateNodeHeights(delNode->GetParent());
 		}
 		// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 		else
@@ -498,5 +529,4 @@ public:
 	}
 };
 
-#endif
-
+#endif //!BSTREE_H
