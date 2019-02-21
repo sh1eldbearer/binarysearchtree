@@ -81,6 +81,7 @@ private:
 			std::cout << " ";
 		}
 		std::cout << node->GetValue() << "\n";
+		//std::cout << node->GetValue() << " (" << node->GetHeight() << ")\n";
 
 		// Attempts to print the left child last 
 		PrintNode(node->GetLeftChild(), space);
@@ -158,6 +159,105 @@ private:
 			startNode->GetRightChild()->SetHeight(height + 1);
 			UpdateNodeHeights(startNode->GetRightChild());
 		}
+	}
+
+	void BalanceTree(BSNode<Type>* startingNode)
+	{
+		int leftHeight = GetTreeHeight(startingNode->GetLeftChild());
+		int rightHeight = GetTreeHeight(startingNode->GetRightChild());
+		int heightDiff = leftHeight - rightHeight;
+
+		if (heightDiff < -1 || heightDiff > 1)
+		{
+			std::cout << "Height difference of " << heightDiff << " means I could be balanced!\n\n";
+
+			// Check where the imbalance is
+			// < -1 means left branch
+			// > 1 means right branch
+		}
+		else
+		{
+			// Tree does not need balanced
+			return;
+		}
+	}
+
+	/// <summary>
+	/// Checks for the height of the tree (or subtree), by running a depth-first search 
+	/// starting at the node passed into the function.
+	/// </summary>
+	/// <param name="startingNode">The node from which to begin the height check.</param>
+	/// <returns>Returns the largest height value in the tree (or subtree).</returns>
+	int GetTreeHeight(BSNode<Type>* startingNode)
+	{
+		int leftHeight = 0, rightHeight = 0;
+
+		// If the node being checked is null, immediately return a zero value
+		if (startingNode == nullptr)
+		{
+			return 0;
+		}
+		// If this leaf is a child, return the height of this node
+		else if (startingNode->GetLeftChild() == nullptr &&
+			startingNode->GetRightChild() == nullptr)
+		{
+			return startingNode->GetHeight();
+		}
+
+		// Depth-first search to determine tree height
+		if (startingNode->GetLeftChild() != nullptr)
+		{
+			// Recursively checks down the left branch first
+			leftHeight = GetTreeHeight(startingNode->GetLeftChild());
+		}
+		else
+		{
+			// If there is no child, returns a zero value
+			leftHeight = 0;
+		}
+
+		if (startingNode->GetRightChild() != nullptr)
+		{
+			// Recursively checks down the right branch
+			rightHeight = GetTreeHeight(startingNode->GetRightChild());
+		}
+		else
+		{
+			// If there is no child, returns a zero value
+			rightHeight = 0;
+		}
+
+		// Compares the height of the two branches, and returns the higher value
+		if (leftHeight > rightHeight)
+		{
+			// Left branch is taller
+			return leftHeight;
+		}
+		else if (rightHeight > leftHeight)
+		{
+			// Right branch is taller
+			return rightHeight;
+		}
+		else if (leftHeight == rightHeight)
+		{
+			// Trees are equal height, so just return one of the heights
+			return leftHeight;
+		}
+		else
+		{
+			std::cout << "Unexpected condition in CheckTreeHeight.\n\n";
+			return -1;
+		}
+	}
+
+	void RotateLeft(BSNode<Type>* pivotNode)
+	{
+
+	}
+
+	void RotateRight(BSNode<Type>* pivotNode)
+	{
+
 	}
 
 public:
@@ -250,6 +350,13 @@ public:
 				{
 					std::cout << "Successfully inserted " << newValue << " into the tree.\n\n";
 				}
+
+				// Attempt to balance the tree (requires a minimum tree height of 2)
+				if (GetTreeHeight(root) >= 2)
+				{
+					BalanceTree(root);
+				}
+
 				return;
 			}
 			// Value already exists in the tree
@@ -282,11 +389,9 @@ public:
 			// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 			else
 			{
-				std::cout << "Unexpected condition.\n\n";
+				std::cout << "Unexpected condition in Insert.\n\n";
 			}
 		}
-
-		// Attempt to balance the tree
 	}
 
 	/// <summary>
@@ -434,9 +539,19 @@ public:
 			// The node being deleted has no left subtree - bring the right child up one level
 			if (successor == delNode->GetRightChild())
 			{
-				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
-				delNode->GetRightChild()->SetParent(delNode->GetParent());
-				delNode->GetRightChild()->SetLeftChild(delNode->GetLeftChild());
+				// If the node being deleted is the root
+				if (delNode == root)
+				{
+					successor->SetParent(nullptr);
+					successor->SetLeftChild(delNode->GetLeftChild());
+					root = successor;
+				}
+				else
+				{
+					delNode->GetParent()->SetRightChild(successor);
+					successor->SetParent(delNode->GetParent());
+					successor->SetLeftChild(delNode->GetLeftChild());
+				}
 				UpdateNodeHeights(delNode->GetParent());
 			}
 			/* Swaps the values of the delNode and succcessor node, 
@@ -451,8 +566,14 @@ public:
 		// The node has only has a single child
 		else if (delNode->GetLeftChild() != nullptr && delNode->GetRightChild() == nullptr)
 		{
+			// If the node being deleted is the root, set the left child as the new root
+			if (delNode == root)
+			{
+				delNode->GetLeftChild()->SetParent(nullptr);
+				root = delNode->GetLeftChild();
+			}
 			// Link the deletion node's parent to the deletion node's left child
-			if (delNode == delNode->GetParent()->GetLeftChild())
+			else if (delNode == delNode->GetParent()->GetLeftChild())
 			{
 				delNode->GetParent()->SetLeftChild(delNode->GetLeftChild());
 				delNode->GetLeftChild()->SetParent(delNode->GetParent());
@@ -466,8 +587,14 @@ public:
 		}
 		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() != nullptr)
 		{
+			// If the node being deleted is the root, set the right child as the new root
+			if (delNode == root)
+			{
+				delNode->GetRightChild()->SetParent(nullptr);
+				root = delNode->GetRightChild();
+			}
 			// Link the deletion node's parent to the deletion node's right child
-			if (delNode == delNode->GetParent()->GetLeftChild())
+			else if (delNode == delNode->GetParent()->GetLeftChild())
 			{
 				delNode->GetParent()->SetLeftChild(delNode->GetRightChild());
 				delNode->GetRightChild()->SetParent(delNode->GetParent());
@@ -482,7 +609,7 @@ public:
 		// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 		else
 		{
-			std::cout << "Unexpected condition.\n\n";
+			std::cout << "Unexpected condition in Delete.\n\n";
 		}
 
 		delete delNode;
