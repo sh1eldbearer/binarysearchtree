@@ -344,8 +344,17 @@ private:
 		// Node below that is the node that will move into pivot's place
 		BSNode<Type>* pivotChild = pivotNode->GetRightChild();
 
-		// If the pivot node has a child on the left side, make it a child of the pivot's other child node
-		currentNode->SetRightChild(pivotNode->GetLeftChild());
+		// If the pivot node has a child on the left side, make it the right child of the current node
+		BSNode<Type>* orphan = pivotNode->GetLeftChild();
+		if (orphan != nullptr)
+		{
+			currentNode->SetRightChild(orphan);
+			currentNode->GetRightChild()->SetParent(currentNode);
+		}
+		else
+		{
+			currentNode->SetRightChild(nullptr);
+		}
 
 		// Move the pivot node into the current node's place, and update its pointers
 		pivotNode->SetLeftChild(currentNode);
@@ -364,7 +373,6 @@ private:
 
 		// Place the the current node as the child of the pivot node
 		currentNode->SetParent(pivotNode);
-		currentNode->SetRightChild(nullptr);
 
 		// Performs manual height adjustments
 		pivotChild->SetHeight(pivotChild->GetHeight() - 1);
@@ -384,8 +392,17 @@ private:
 		// Node below that is the node that will move into pivot's place
 		BSNode<Type>* pivotChild = pivotNode->GetLeftChild();
 
-		// If the pivot node has a child on the opposite size, make it a child of the pivot's other child node
-		pivotChild->SetRightChild(pivotNode->GetRightChild());
+		// If the pivot node has a child on the right side, make it the left child of the current node
+		BSNode<Type>* orphan = pivotNode->GetRightChild();
+		if (orphan != nullptr)
+		{
+			currentNode->SetLeftChild(orphan);
+			currentNode->GetLeftChild()->SetParent(currentNode);
+		}
+		else
+		{
+			currentNode->SetLeftChild(nullptr);
+		}
 
 		// Move the pivot node into the current node's place, and update its pointers
 		pivotNode->SetRightChild(currentNode);
@@ -404,7 +421,6 @@ private:
 
 		// Place the the current node as the child of the pivot node
 		currentNode->SetParent(pivotNode);
-		currentNode->SetLeftChild(nullptr);
 
 		// Performs manual height adjustments
 		pivotChild->SetHeight(pivotChild->GetHeight() - 1);

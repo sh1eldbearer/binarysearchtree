@@ -179,9 +179,19 @@ template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount)
 	std::cout << "Working...\n";
 	clock_t runTimer;
 	runTimer = clock();
-	for (int count = 0; count < nodeCount; count++)
+	if (nodeCount > 0)
 	{
-		theBST->Insert((Type)count, false);
+		for (int count = 0; count < nodeCount; count++)
+		{
+			theBST->Insert((Type)count, false);
+		}
+	}
+	else
+	{
+		for (int count = 0; count < -nodeCount; count++)
+		{
+			theBST->Insert(-(Type)count, false);
+		}
 	}
 	runTimer = clock() - runTimer;
 	std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds).\n\n";
