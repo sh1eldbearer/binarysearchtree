@@ -10,15 +10,10 @@ template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount);
 
 int main()
 {
-	BSTree<float> theBST;
+	BSTree<int> theBST;
 	bool runProgram = true;
 	int menuInput;
-	float userInput;
-
-	// Simple testing arrays	
-	std::array<float, 19> testArray1 = { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15, 14.5, 16, 15.5, 17 };
-	std::array<float, 9> testArray2 = { 12, 8, 5, 11, 4, 7, 2, 18, 17 };
-	std::array<float, 10> testArray3 = { 2, 1, 3, 4, 5, 6, 7, 8, 9, 10 };
+	int userInput;
 
 	while (runProgram)
 	{
@@ -33,16 +28,13 @@ int main()
 
 			<< "\n66. Print the tree\n"
 
-			<< "\nWARNING: OPTIONS 71-84 WILL DELETE ALL VALUES IN THE TREE BEFORE ADDING NEW VALUES"
-			<< "\n71. Insert test array 1 into the tree"
-			<< "\n72. Insert test array 2 into the tree"
-			<< "\n73. Insert test array 3 into the tree\n"
-
-			<< "\n81. Insert 100 values into the tree"
-			<< "\n82. Insert 1000 values into the tree"
-			<< "\nWARNING: OPTIONS 83 & 84 ARE NON-OPTIMIZED, MAY TAKE A VERY LONG TIME, AND MAY THROW ERRORS"
-			<< "\n83. Insert 10000 values into the tree"
-			<< "\n84. Insert 100000 values into the tree\n"
+			<< "\nOPTIONS 81-85 WILL DELETE ALL VALUES IN THE TREE BEFORE ADDING NEW VALUES"
+			<< "\nENTER NEGATIVE MENU NUMBERS TO ADD VALUES FROM LARGEST TO SMALLEST"
+			<< "\n81. Insert 10 values into the tree"
+			<< "\n82. Insert 100 values into the tree"
+			<< "\n83. Insert 1000 values into the tree"
+			<< "\n84. Insert 10000 values into the tree"
+			<< "\n85. Insert 100000 values into the tree\n"
 
 			<< "\n99. Exit program"
 			
@@ -85,49 +77,35 @@ int main()
 			case 66:	// Print the tree to the console
 				theBST.Print();
 				break;
-			case 71:	// Insert test array 1
-				theBST.DeleteAll(false);
-				for (int count = 0; count < testArray1.size(); count++)
-				{
-					theBST.Insert(testArray1[count]);
-				}
-				break;
-			case 72:	// Insert test array 2
-				theBST.DeleteAll(false);
-				for (int count = 0; count < (int)testArray2.size(); count++)
-				{
-					theBST.Insert(testArray2[count]);
-				}
-				break;
-			case 73:	// Insert test array 3
-				theBST.DeleteAll(false);
-				for (int count = 0; count < (int)testArray3.size(); count++)
-				{
-					theBST.Insert(testArray3[count]);
-				}
-				break;
-			case 80:
+			case -81:	// Add 10 nodes to the BST (reverse)
 				AddNodes(&theBST, -10);
 				break;
-			case 81:	// Add 100 nodes to the BST
+			case 81:	// Add 10 nodes to the BST
+				AddNodes(&theBST, 10);
+				break;
+			case -82:	// Add 100 nodes to the BST (reverse)
+				AddNodes(&theBST, -100);
+				break;
+			case 82:	// Add 100 nodes to the BST
 				AddNodes(&theBST, 100);
 				break;
-			case 82:	// Add 1000 nodes to the BST
+			case -83:	// Add 1000 nodes to the BST (reverse)
+				AddNodes(&theBST, -1000);
+				break;
+			case 83:	// Add 1000 nodes to the BST
 				AddNodes(&theBST, 1000);
 				break;
-			case 83:	// Add 10000 nodes to the BST
-				AddNodes(&theBST, 10000);
-				std::cout << "Exiting program, because attempting to delete all 10000\n" <<
-					"nodes will cause a stack overflow error due to non-optimization.\n\n";
-				system("pause");
-				runProgram = false;
+			case -84:	// Add 10000 nodes to the BST (reverse)
+				AddNodes(&theBST, -10000);
 				break;
-			case 84:	// Add 100000 nodes to the BST
+			case 84:	// Add 10000 nodes to the BST
+				AddNodes(&theBST, 10000);
+				break;
+			case -85:	// Add 100000 nodes to the BST (reverse)
+				AddNodes(&theBST, -100000);
+				break;
+			case 85:	// Add 100000 nodes to the BST
 				AddNodes(&theBST, 100000);
-				std::cout << "Exiting program, because attempting to delete all 100000\n" <<
-					"nodes will cause a stack overflow error due to non-optimization.\n\n";
-				system("pause");
-				runProgram = false;
 				break;
 			case 99:	// Exit the program
 				runProgram = false;
@@ -188,11 +166,12 @@ template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount)
 	}
 	else
 	{
-		for (int count = 0; count < -nodeCount; count++)
+		for (int count = -nodeCount; count > 0; count--)
 		{
-			theBST->Insert(-(Type)count, false);
+			theBST->Insert((Type)count, false);
 		}
 	}
 	runTimer = clock() - runTimer;
-	std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds).\n\n";
+	system("cls");
+	std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds).\n\n\a";
 }

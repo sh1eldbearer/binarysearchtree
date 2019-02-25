@@ -131,37 +131,43 @@ private:
 		delete delNode;
 	}
 
-	// TODO: Documentation
-	void BalanceTree(BSNode<Type>* startingNode)
+	/// <summary>
+	/// Attempts to balance the tree (or subtree), starting from the node passed into the 
+	/// function.
+	/// </summary>
+	/// <param name="nodeToCheck">The node at which the tree's (or subtree's) balance is 
+	/// checked.</param>
+	void BalanceTree(BSNode<Type>* nodeToCheck)
 	{
-		BSNode<Type>* currentNode = startingNode->GetParent();
+		BSNode<Type>* currentNode = nodeToCheck->GetParent();
 		int balanceDiff;
 
 		while (currentNode != nullptr)
 		{
 			// Determines the balance of the two branches under the current node
-			balanceDiff = GetNodeBalance(currentNode);
+			balanceDiff = CheckTreeBalance(currentNode);
+
 			// Check for imbalances
 
 			// Left case
-			if (balanceDiff > 1 && startingNode->GetValue() < currentNode->GetLeftChild()->GetValue())
+			if (balanceDiff > 1)
 			{
+				// Left-right case
+				if (nodeToCheck->GetValue() > currentNode->GetLeftChild()->GetValue())
+				{
+					RotateLeft(currentNode->GetLeftChild());
+				}
 				currentNode = RotateRight(currentNode);
 			}
-			// Left-right case
-			else if (balanceDiff > 1 && startingNode->GetValue() > currentNode->GetLeftChild()->GetValue())
-			{
-
-			}
 			// Right case
-			else if (balanceDiff < -1 && startingNode->GetValue() > currentNode->GetRightChild()->GetValue())
+			else if (balanceDiff < -1 && nodeToCheck->GetValue() > currentNode->GetRightChild()->GetValue())
 			{
+				// Right-left case
+				if (nodeToCheck->GetValue() < currentNode->GetRightChild()->GetValue())
+				{
+					RotateRight(currentNode->GetRightChild());
+				}
 				currentNode = RotateLeft(currentNode);
-			}
-			// Right-left case
-			else if (balanceDiff < -1 && startingNode->GetValue() < currentNode->GetRightChild()->GetValue())
-			{
-
 			}
 
 			// Move to the next node in the path of ascension
@@ -237,30 +243,40 @@ private:
 		}
 	}
 
-	// TODO: Documentation
-	int GetNodeBalance(BSNode<Type>* nodeToCheck)
+	/// <summary>
+	/// Checks the balance of the branches beneath the node passed into the function.
+	/// </summary>
+	/// <param name="nodeToCheck">The node from which to check the tree's balance.</param>
+	/// <returns>The difference between the heights of the left and right branches
+	/// below the node being checked.</returns>
+	int CheckTreeBalance(BSNode<Type>* nodeToCheck)
 	{
 		int leftHeight, rightHeight;
 
+		// If the node being checked is null, immediately return a zero value
 		if (nodeToCheck == nullptr)
 		{
 			return 0;
 		}
 		else
 		{
+			// If there is not a child node, return the height of the node being checked
 			if (nodeToCheck->GetLeftChild() == nullptr)
 			{
 				leftHeight = nodeToCheck->GetHeight();
 			}
+			// Otherwise, return the height of the highest leaf of the tree
 			else
 			{
 				leftHeight = GetTreeHeight(nodeToCheck->GetLeftChild());
 			}
 
+			// If there is not a child node, return the height of the node being checked
 			if (nodeToCheck->GetRightChild() == nullptr)
 			{
-				rightHeight = 0;
+				rightHeight = nodeToCheck->GetHeight();
 			}
+			// Otherwise, return the height of the highest leaf of the tree
 			else
 			{
 				rightHeight = GetTreeHeight(nodeToCheck->GetRightChild());
@@ -270,11 +286,15 @@ private:
 		}
 	}
 
-	// TODO: Documentation
-	BSNode<Type>* RotateLeft(BSNode<Type>* currentNode)
+	/// <summary>
+	/// Rotates the provided node to the to the left subtree.
+	/// </summary>
+	/// <param name="rotateNode">The node to be rotated to the left.</param>
+	/// <returns>The node that was rotated into the original node's position.</returns>
+	BSNode<Type>* RotateLeft(BSNode<Type>* rotateNode)
 	{
 		// Node below current is the node that will move into current's place
-		BSNode<Type>* pivotNode = currentNode->GetRightChild();
+		BSNode<Type>* pivotNode = rotateNode->GetRightChild();
 		// Node below that is the node that will move into pivot's place
 		BSNode<Type>* pivotChild = pivotNode->GetRightChild();
 
@@ -282,19 +302,19 @@ private:
 		BSNode<Type>* orphan = pivotNode->GetLeftChild();
 		if (orphan != nullptr)
 		{
-			currentNode->SetRightChild(orphan);
-			currentNode->GetRightChild()->SetParent(currentNode);
+			rotateNode->SetRightChild(orphan);
+			rotateNode->GetRightChild()->SetParent(rotateNode);
 		}
 		else
 		{
-			currentNode->SetRightChild(nullptr);
+			rotateNode->SetRightChild(nullptr);
 		}
 
 		// Move the pivot node into the current node's place, and update its pointers
-		pivotNode->SetLeftChild(currentNode);
-		pivotNode->SetParent(currentNode->GetParent());
+		pivotNode->SetLeftChild(rotateNode);
+		pivotNode->SetParent(rotateNode->GetParent());
 
-		if (currentNode == root)
+		if (rotateNode == root)
 		{
 			// If the current node was the root, make the pivot node the new root
 			root = pivotNode;
@@ -302,23 +322,24 @@ private:
 		else
 		{
 			// Otherwise, update the current node's parent to point to the pivot node
-			currentNode->GetParent()->SetRightChild(pivotNode);
+			rotateNode->GetParent()->SetRightChild(pivotNode);
 		}
 
 		// Place the the current node as the child of the pivot node
-		currentNode->SetParent(pivotNode);
-
-		// Update all node heights under the pivot node
-		//UpdateNodeHeights(pivotNode);
+		rotateNode->SetParent(pivotNode);
 
 		return pivotNode;
 	}
 
-	// TODO: Documentation
-	BSNode<Type>* RotateRight(BSNode<Type>* currentNode)
+	/// <summary>
+	/// Rotates the provided node to the to the right subtree.
+	/// </summary>
+	/// <param name="rotateNode">The node to be rotated to the right.</param>
+	/// <returns>The node that was rotated into the original node's position.</returns>
+	BSNode<Type>* RotateRight(BSNode<Type>* rotateNode)
 	{
 		// Node below current is the node that will move into current's place
-		BSNode<Type>* pivotNode = currentNode->GetLeftChild();
+		BSNode<Type>* pivotNode = rotateNode->GetLeftChild();
 		// Node below that is the node that will move into pivot's place
 		BSNode<Type>* pivotChild = pivotNode->GetLeftChild();
 
@@ -326,19 +347,19 @@ private:
 		BSNode<Type>* orphan = pivotNode->GetRightChild();
 		if (orphan != nullptr)
 		{
-			currentNode->SetLeftChild(orphan);
-			currentNode->GetLeftChild()->SetParent(currentNode);
+			rotateNode->SetLeftChild(orphan);
+			rotateNode->GetLeftChild()->SetParent(rotateNode);
 		}
 		else
 		{
-			currentNode->SetLeftChild(nullptr);
+			rotateNode->SetLeftChild(nullptr);
 		}
 
 		// Move the pivot node into the current node's place, and update its pointers
-		pivotNode->SetRightChild(currentNode);
-		pivotNode->SetParent(currentNode->GetParent());
+		pivotNode->SetRightChild(rotateNode);
+		pivotNode->SetParent(rotateNode->GetParent());
 
-		if (currentNode == root)
+		if (rotateNode == root)
 		{
 			// If the current node was the root, make the pivot node the new root
 			root = pivotNode;
@@ -346,14 +367,11 @@ private:
 		else
 		{
 			// Otherwise, update the current node's parent to point to the pivot node
-			currentNode->GetParent()->SetLeftChild(pivotNode);
+			rotateNode->GetParent()->SetLeftChild(pivotNode);
 		}
 
 		// Place the the current node as the child of the pivot node
-		currentNode->SetParent(pivotNode);
-
-		// Update all node heights under the pivot node
-		//UpdateNodeHeights(pivotNode);
+		rotateNode->SetParent(pivotNode);
 
 		return pivotNode;
 	}
@@ -636,20 +654,9 @@ public:
 			// The node being deleted has no left subtree - bring the right child up one level
 			if (successor == delNode->GetRightChild())
 			{
-				// If the node being deleted is the root
-				if (delNode == root)
-				{
-					successor->SetParent(nullptr);
-					successor->SetLeftChild(delNode->GetLeftChild());
-					root = successor;
-				}
-				else
-				{
-					delNode->GetParent()->SetRightChild(successor);
-					successor->SetParent(delNode->GetParent());
-					successor->SetLeftChild(delNode->GetLeftChild());
-				}
-				UpdateNodeHeights(delNode->GetParent());
+				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
+				delNode->GetRightChild()->SetParent(delNode->GetParent());
+				delNode->GetRightChild()->SetLeftChild(delNode->GetLeftChild());
 			}
 			/* Swaps the values of the delNode and succcessor node, 
 			 * and sets the successor node as the node to be deleted */
@@ -680,7 +687,6 @@ public:
 				delNode->GetParent()->SetRightChild(delNode->GetLeftChild());
 				delNode->GetLeftChild()->SetParent(delNode->GetParent());
 			}
-			UpdateNodeHeights(delNode->GetParent());
 		}
 		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() != nullptr)
 		{
@@ -701,7 +707,6 @@ public:
 				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
 				delNode->GetRightChild()->SetParent(delNode->GetParent());
 			}
-			UpdateNodeHeights(delNode->GetParent());
 		}
 		// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 		else
