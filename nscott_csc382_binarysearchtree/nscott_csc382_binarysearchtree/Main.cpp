@@ -106,6 +106,9 @@ int main()
 					theBST.Insert(testArray3[count]);
 				}
 				break;
+			case 80:
+				AddNodes(&theBST, -10);
+				break;
 			case 81:	// Add 100 nodes to the BST
 				AddNodes(&theBST, 100);
 				break;
