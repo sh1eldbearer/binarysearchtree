@@ -175,27 +175,24 @@ template<typename Type> bool TestUserInput(Type* userInput, bool clearScreen)
 // Adds a number of nodes to the BST
 template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount)
 {
-	if (nodeCount != 0)
+	theBST->DeleteAll(false);
+	std::cout << "Working...\n";
+	clock_t runTimer;
+	runTimer = clock();
+	if (nodeCount > 0)
 	{
-		theBST->DeleteAll(false);
-		std::cout << "Working...\n";
-		clock_t runTimer;
-		runTimer = clock();
-		if (nodeCount > 0)
+		for (int count = 0; count < nodeCount; count++)
 		{
-			for (int count = 0; count < nodeCount; count++)
-			{
-				theBST->Insert((Type)count, false);
-			}
+			theBST->Insert((Type)count, false);
 		}
-		else if (nodeCount < 0)
-		{
-			for (int count = 0; count < -nodeCount; count++)
-			{
-				theBST->Insert(-(Type)count, false);
-			}
-		}
-		runTimer = clock() - runTimer;
-		std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds).\n\n";
 	}
+	else
+	{
+		for (int count = 0; count < -nodeCount; count++)
+		{
+			theBST->Insert(-(Type)count, false);
+		}
+	}
+	runTimer = clock() - runTimer;
+	std::cout << "Adding " << nodeCount << " nodes took " << runTimer << " clicks (" << ((float)runTimer / CLOCKS_PER_SEC) << " seconds).\n\n";
 }
