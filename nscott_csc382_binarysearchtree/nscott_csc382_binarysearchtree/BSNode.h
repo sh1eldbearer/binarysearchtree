@@ -10,6 +10,26 @@ private:
 	BSNode<Type>* parent;	// A pointer to the parent node of this node
 	BSNode<Type>* leftChild;	// A pointer to the left child node of this node
 	BSNode<Type>* rightChild;	// A pointer to the right child node of this node
+
+	/// <summary>
+	/// Changes the height this node resides at in the tree. Also recursively adjusts
+	/// the height of any child nodes under this node.
+	/// </summary>
+	/// <param name="newValue">The new height at which this node resides in the tree.</param>
+	void SetHeight(int newHeight)
+	{
+		height = newHeight;
+
+		// Recursively adjusts the height of any child nodes under this node
+		if (leftChild != nullptr)
+		{
+			leftChild->SetHeight(height + 1);
+		}
+		if (rightChild != nullptr)
+		{
+			rightChild->SetHeight(height + 1);
+		}
+	}
 public:
 	/// <summary>
 	/// Default constructor.
@@ -17,7 +37,20 @@ public:
 	BSNode()
 	{ 
 		value = NULL;
-		height = -1;
+		height = 0;
+		parent = nullptr;
+		leftChild = nullptr;
+		rightChild = nullptr;
+	}
+
+	/// <summary>
+	/// Constructor with an initialized value.
+	/// </summary> 
+	/// <param name="initValue">The initial value to be stored in this node.</param>
+	BSNode(Type initValue)
+	{
+		value = initValue;
+		height = 0;
 		parent = nullptr;
 		leftChild = nullptr;
 		rightChild = nullptr;
@@ -56,15 +89,6 @@ public:
 	}
 
 	/// <summary>
-	/// Changes the height this node resides at in the tree.
-	/// </summary>
-	/// <param name="newValue">The new height at which this node resides in the tree.</param>
-	void SetHeight(int newHeight)
-	{
-		height = newHeight;
-	}
-
-	/// <summary>
 	/// Accessor for the pointer to this node's parent node.
 	/// </summary>
 	/// <param name="newValue"></param>
@@ -75,12 +99,21 @@ public:
 	}
 
 	/// <summary>
-	/// Changes which node is this node's parent node.
+	/// Changes which node is this node's parent node. Also adjusts the node's height value.
 	/// </summary>
 	/// <param name="newValue">The pointer to be set as this node's parent.</param>
 	void SetParent(BSNode<Type>* newPtr)
 	{
 		parent = newPtr;
+		
+		if (parent == nullptr)
+		{
+			SetHeight(0);
+		}
+		else
+		{
+			SetHeight(parent->GetHeight() + 1);
+		}
 	}
 
 	/// <summary>
@@ -93,12 +126,17 @@ public:
 	}
 
 	/// <summary>
-	/// Changes which node is this node's left child node.
+	/// Changes which node is this node's left child node. Also adjusts the child's height.
 	/// </summary>
 	/// <param name="newValue">The pointer to be set as this node's left child node.</param>
 	void SetLeftChild(BSNode<Type>* newPtr)
 	{
 		leftChild = newPtr;
+
+		if (leftChild != nullptr)
+		{
+			leftChild->SetHeight(height + 1);
+		}
 	}
 
 	/// <summary>
@@ -111,12 +149,17 @@ public:
 	}
 
 	/// <summary>
-	/// Changes which node is this node's right child node.
+	/// Changes which node is this node's right child node. Also adjusts the child's height.
 	/// </summary>
 	/// <param name="newValue">The pointer to be set as this node's right child node.</param>
 	void SetRightChild(BSNode<Type>* newPtr)
 	{
 		rightChild = newPtr;
+
+		if (rightChild != nullptr)
+		{
+			rightChild->SetHeight(height + 1);
+		}
 	}
 };
 

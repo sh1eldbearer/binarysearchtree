@@ -131,36 +131,7 @@ private:
 		delete delNode;
 	}
 
-	/// <summary>
-	/// Updates the height value of each node in the subtree under the starting node.
-	/// </summary>
-	/// <param name="startNode">The root of the tree (or subtree) to update the heights of.</param>
-	void UpdateNodeHeights(BSNode<Type>* startNode)
-	{
-		// If the node being checked is null, immediately exit the function
-		if (startNode == nullptr)
-		{
-			return;
-		}
-
-		// Use the height of the starting node as a starting height value
-		int height = startNode->GetHeight();
-
-		// Do a breadth-first search through the tree
-		if (startNode->GetLeftChild() != nullptr)
-		{
-			// Adjust the height and recursively search for child nodes
-			startNode->GetLeftChild()->SetHeight(height + 1);
-			UpdateNodeHeights(startNode->GetLeftChild());
-		}
-		if (startNode->GetRightChild() != nullptr)
-		{
-			// Adjust the height and recursively search for child nodes
-			startNode->GetRightChild()->SetHeight(height + 1);
-			UpdateNodeHeights(startNode->GetRightChild());
-		}
-	}
-
+	// TODO: Documentation
 	void BalanceTree(BSNode<Type>* startingNode)
 	{
 		BSNode<Type>* currentNode = startingNode->GetParent();
@@ -196,45 +167,6 @@ private:
 			// Move to the next node in the path of ascension
 			currentNode = currentNode->GetParent();
 		}
-		/*
-		if (heightDiff < -1 || heightDiff > 1)
-		{
-			// TODO: Delete before submission
-			std::cout << "Height difference of " << heightDiff << " means I could be balanced!\n\n";
-
-			int subLeftHeight = 0, subRightHeight = 0, subHeightDiff = 0;
-			BSNode<Type>* currentNode = createdNode;
-			// Check where the imbalance is
-			while (subHeightDiff >= -1 && subHeightDiff <= 1)
-			{
-				currentNode = createdNode->GetParent();
-				subLeftHeight = GetTreeHeight(currentNode->GetLeftChild(), currentNode->GetParent()->GetHeight());
-				subRightHeight = GetTreeHeight(currentNode->GetRightChild(), currentNode->GetParent()->GetHeight());
-				subHeightDiff = subLeftHeight - subRightHeight;
-			}
-			std::cout << currentNode->GetValue() << "\n\n";
-
-			if (subHeightDiff < -1)
-			{
-				// < -1 means left branch
-				//RotateRight(createdNode, currentNode);
-			}
-			else if (subHeightDiff > 1)
-			{
-				// > 1 means right branch
-				//RotateLeft(createdNode, currentNode);
-			}
-			else
-			{
-				std::cout << "Unexpected condition in BalanceTree.\n\n";
-			}
-		}
-		else
-		{
-			// Tree does not need balanced
-			return;
-		}
-		*/
 	}
 
 	/// <summary>
@@ -305,6 +237,7 @@ private:
 		}
 	}
 
+	// TODO: Documentation
 	int GetNodeBalance(BSNode<Type>* nodeToCheck)
 	{
 		int leftHeight, rightHeight;
@@ -337,6 +270,7 @@ private:
 		}
 	}
 
+	// TODO: Documentation
 	BSNode<Type>* RotateLeft(BSNode<Type>* currentNode)
 	{
 		// Node below current is the node that will move into current's place
@@ -374,17 +308,13 @@ private:
 		// Place the the current node as the child of the pivot node
 		currentNode->SetParent(pivotNode);
 
-		// Performs manual height adjustments
-		pivotChild->SetHeight(pivotChild->GetHeight() - 1);
-		pivotNode->SetHeight(pivotNode->GetHeight() - 1);
-		currentNode->SetHeight(currentNode->GetHeight() + 1);
-
 		// Update all node heights under the pivot node
-		UpdateNodeHeights(pivotNode);
+		//UpdateNodeHeights(pivotNode);
 
 		return pivotNode;
 	}
 
+	// TODO: Documentation
 	BSNode<Type>* RotateRight(BSNode<Type>* currentNode)
 	{
 		// Node below current is the node that will move into current's place
@@ -422,13 +352,8 @@ private:
 		// Place the the current node as the child of the pivot node
 		currentNode->SetParent(pivotNode);
 
-		// Performs manual height adjustments
-		pivotChild->SetHeight(pivotChild->GetHeight() - 1);
-		pivotNode->SetHeight(pivotNode->GetHeight() - 1);
-		currentNode->SetHeight(currentNode->GetHeight() + 1);
-
 		// Update all node heights under the pivot node
-		UpdateNodeHeights(pivotNode);
+		//UpdateNodeHeights(pivotNode);
 
 		return pivotNode;
 	}
@@ -498,7 +423,6 @@ public:
 			if (nodeToCheck == nullptr)
 			{
 				newNode->SetValue(newValue);
-				newNode->SetHeight(height);
 				// If the tree has no root node, set the new node as the root
 				if (IsEmpty(false))
 				{
