@@ -80,7 +80,8 @@ private:
 		{
 			std::cout << " ";
 		}
-		std::cout << node->GetValue() << "\n";
+		//std::cout << node->GetValue() << "\n";
+		std::cout << node->GetValue() << " (" << node->GetHeight() << ")\n";
 
 		// Attempts to print the left child last 
 		PrintNode(node->GetLeftChild(), space);
@@ -158,6 +159,262 @@ private:
 			startNode->GetRightChild()->SetHeight(height + 1);
 			UpdateNodeHeights(startNode->GetRightChild());
 		}
+	}
+
+	void BalanceTree(BSNode<Type>* startingNode)
+	{
+		BSNode<Type>* currentNode = startingNode->GetParent();
+		int balanceDiff;
+
+		while (currentNode != nullptr)
+		{
+			// Determines the balance of the two branches under the current node
+			balanceDiff = GetNodeBalance(currentNode);
+			// Check for imbalances
+
+			// Left case
+			if (balanceDiff > 1 && startingNode->GetValue() < currentNode->GetLeftChild()->GetValue())
+			{
+				currentNode = RotateRight(currentNode);
+			}
+			// Left-right case
+			else if (balanceDiff > 1 && startingNode->GetValue() > currentNode->GetLeftChild()->GetValue())
+			{
+
+			}
+			// Right case
+			else if (balanceDiff < -1 && startingNode->GetValue() > currentNode->GetRightChild()->GetValue())
+			{
+				currentNode = RotateLeft(currentNode);
+			}
+			// Right-left case
+			else if (balanceDiff < -1 && startingNode->GetValue() < currentNode->GetRightChild()->GetValue())
+			{
+
+			}
+
+			// Move to the next node in the path of ascension
+			currentNode = currentNode->GetParent();
+		}
+		/*
+		if (heightDiff < -1 || heightDiff > 1)
+		{
+			// TODO: Delete before submission
+			std::cout << "Height difference of " << heightDiff << " means I could be balanced!\n\n";
+
+			int subLeftHeight = 0, subRightHeight = 0, subHeightDiff = 0;
+			BSNode<Type>* currentNode = createdNode;
+			// Check where the imbalance is
+			while (subHeightDiff >= -1 && subHeightDiff <= 1)
+			{
+				currentNode = createdNode->GetParent();
+				subLeftHeight = GetTreeHeight(currentNode->GetLeftChild(), currentNode->GetParent()->GetHeight());
+				subRightHeight = GetTreeHeight(currentNode->GetRightChild(), currentNode->GetParent()->GetHeight());
+				subHeightDiff = subLeftHeight - subRightHeight;
+			}
+			std::cout << currentNode->GetValue() << "\n\n";
+
+			if (subHeightDiff < -1)
+			{
+				// < -1 means left branch
+				//RotateRight(createdNode, currentNode);
+			}
+			else if (subHeightDiff > 1)
+			{
+				// > 1 means right branch
+				//RotateLeft(createdNode, currentNode);
+			}
+			else
+			{
+				std::cout << "Unexpected condition in BalanceTree.\n\n";
+			}
+		}
+		else
+		{
+			// Tree does not need balanced
+			return;
+		}
+		*/
+	}
+
+	/// <summary>
+	/// Checks for the height of the tree (or subtree), by running a depth-first search 
+	/// starting at the node passed into the function.
+	/// </summary>
+	/// <param name="startingNode">The node from which to begin the height check.</param>
+	/// <returns>Returns the largest height value in the tree (or subtree).</returns>
+	int GetTreeHeight(BSNode<Type>* startingNode)
+	{
+		int height = startingNode->GetHeight(), leftHeight = 0, rightHeight = 0;
+
+		// If the node being checked is null, immediately return a zero value
+		if (startingNode == nullptr)
+		{
+			return height;
+		}
+		// If this leaf is a child, return the height of this node
+		else if (startingNode->GetLeftChild() == nullptr &&
+			startingNode->GetRightChild() == nullptr)
+		{
+			return startingNode->GetHeight();
+		}
+
+		// Depth-first search to determine tree height
+		if (startingNode->GetLeftChild() != nullptr)
+		{
+			// Recursively checks down the left branch first
+			leftHeight = GetTreeHeight(startingNode->GetLeftChild());
+		}
+		else
+		{
+			// If there is no child, returns a zero value
+			leftHeight = startingNode->GetHeight();
+		}
+
+		if (startingNode->GetRightChild() != nullptr)
+		{
+			// Recursively checks down the right branch
+			rightHeight = GetTreeHeight(startingNode->GetRightChild());
+		}
+		else
+		{
+			// If there is no child, returns a zero value
+			rightHeight = startingNode->GetHeight();
+		}
+
+		// Compares the height of the two branches, and returns the higher value
+		if (leftHeight > rightHeight)
+		{
+			// Left branch is taller
+			return leftHeight;
+		}
+		else if (rightHeight > leftHeight)
+		{
+			// Right branch is taller
+			return rightHeight;
+		}
+		else if (leftHeight == rightHeight)
+		{
+			// Trees are equal height, so just return one of the heights
+			return leftHeight;
+		}
+		else
+		{
+			std::cout << "Unexpected condition in CheckTreeHeight.\n\n";
+			return -1;
+		}
+	}
+
+	int GetNodeBalance(BSNode<Type>* nodeToCheck)
+	{
+		int leftHeight, rightHeight;
+
+		if (nodeToCheck == nullptr)
+		{
+			return 0;
+		}
+		else
+		{
+			if (nodeToCheck->GetLeftChild() == nullptr)
+			{
+				leftHeight = nodeToCheck->GetHeight();
+			}
+			else
+			{
+				leftHeight = GetTreeHeight(nodeToCheck->GetLeftChild());
+			}
+
+			if (nodeToCheck->GetRightChild() == nullptr)
+			{
+				rightHeight = 0;
+			}
+			else
+			{
+				rightHeight = GetTreeHeight(nodeToCheck->GetRightChild());
+			}
+
+			return leftHeight - rightHeight;
+		}
+	}
+
+	BSNode<Type>* RotateLeft(BSNode<Type>* currentNode)
+	{
+		// Node below current is the node that will move into current's place
+		BSNode<Type>* pivotNode = currentNode->GetRightChild();
+		// Node below that is the node that will move into pivot's place
+		BSNode<Type>* pivotChild = pivotNode->GetRightChild();
+
+		// If the pivot node has a child on the left side, make it a child of the pivot's other child node
+		currentNode->SetRightChild(pivotNode->GetLeftChild());
+
+		// Move the pivot node into the current node's place, and update its pointers
+		pivotNode->SetLeftChild(currentNode);
+		pivotNode->SetParent(currentNode->GetParent());
+
+		if (currentNode == root)
+		{
+			// If the current node was the root, make the pivot node the new root
+			root = pivotNode;
+		}
+		else
+		{
+			// Otherwise, update the current node's parent to point to the pivot node
+			currentNode->GetParent()->SetRightChild(pivotNode);
+		}
+
+		// Place the the current node as the child of the pivot node
+		currentNode->SetParent(pivotNode);
+		currentNode->SetRightChild(nullptr);
+
+		// Performs manual height adjustments
+		pivotChild->SetHeight(pivotChild->GetHeight() - 1);
+		pivotNode->SetHeight(pivotNode->GetHeight() - 1);
+		currentNode->SetHeight(currentNode->GetHeight() + 1);
+
+		// Update all node heights under the pivot node
+		UpdateNodeHeights(pivotNode);
+
+		return pivotNode;
+	}
+
+	BSNode<Type>* RotateRight(BSNode<Type>* currentNode)
+	{
+		// Node below current is the node that will move into current's place
+		BSNode<Type>* pivotNode = currentNode->GetLeftChild();
+		// Node below that is the node that will move into pivot's place
+		BSNode<Type>* pivotChild = pivotNode->GetLeftChild();
+
+		// If the pivot node has a child on the opposite size, make it a child of the pivot's other child node
+		pivotChild->SetRightChild(pivotNode->GetRightChild());
+
+		// Move the pivot node into the current node's place, and update its pointers
+		pivotNode->SetRightChild(currentNode);
+		pivotNode->SetParent(currentNode->GetParent());
+
+		if (currentNode == root)
+		{
+			// If the current node was the root, make the pivot node the new root
+			root = pivotNode;
+		}
+		else
+		{
+			// Otherwise, update the current node's parent to point to the pivot node
+			currentNode->GetParent()->SetLeftChild(pivotNode);
+		}
+
+		// Place the the current node as the child of the pivot node
+		currentNode->SetParent(pivotNode);
+		currentNode->SetLeftChild(nullptr);
+
+		// Performs manual height adjustments
+		pivotChild->SetHeight(pivotChild->GetHeight() - 1);
+		pivotNode->SetHeight(pivotNode->GetHeight() - 1);
+		currentNode->SetHeight(currentNode->GetHeight() + 1);
+
+		// Update all node heights under the pivot node
+		UpdateNodeHeights(pivotNode);
+
+		return pivotNode;
 	}
 
 public:
@@ -250,6 +507,13 @@ public:
 				{
 					std::cout << "Successfully inserted " << newValue << " into the tree.\n\n";
 				}
+
+				// Attempt to balance the tree (requires a minimum tree height of 2)
+				if (GetTreeHeight(root) >= 2)
+				{
+					BalanceTree(newNode);
+				}
+
 				return;
 			}
 			// Value already exists in the tree
