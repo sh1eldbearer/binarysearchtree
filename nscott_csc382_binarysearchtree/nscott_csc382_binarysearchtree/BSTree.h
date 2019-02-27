@@ -432,8 +432,7 @@ public:
 	{
 		BSNode<Type>* newNode = new BSNode<Type>();
 		BSNode<Type>* nodeToCheck = root;
-		int height = 0;
-
+		
 		// Create a new node
 		while (newNode->GetValue() == NULL)
 		{
@@ -447,17 +446,13 @@ public:
 					root = newNode;
 				}
 				// If the tree does have a root node, assigns this node as a child of its parent node
-				else
+				else if (newValue > newNode->GetParent()->GetValue())
 				{
-					if (newValue > newNode->GetParent()->GetValue())
-					{
-						newNode->GetParent()->SetRightChild(newNode);
-					}
-					else if (newValue < newNode->GetParent()->GetValue())
-					{
-						newNode->GetParent()->SetLeftChild(newNode);
-					}
-
+					newNode->GetParent()->SetRightChild(newNode);
+				}
+				else if (newValue < newNode->GetParent()->GetValue())
+				{
+					newNode->GetParent()->SetLeftChild(newNode);
 				}
 
 				// Suppresses console output is verbose is false
@@ -492,14 +487,12 @@ public:
 			{
 				newNode->SetParent(nodeToCheck);
 				nodeToCheck = nodeToCheck->GetLeftChild();
-				height++;
 			}
 			// Larger values get inserted further down the right branch
 			else if (newValue > nodeToCheck->GetValue())
 			{
 				newNode->SetParent(nodeToCheck);
 				nodeToCheck = nodeToCheck->GetRightChild();
-				height++;
 			}
 			// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 			else
@@ -654,20 +647,40 @@ public:
 			// The node being deleted has no left subtree - bring the right child up one level
 			if (successor == delNode->GetRightChild())
 			{
-				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
-				delNode->GetRightChild()->SetParent(delNode->GetParent());
-				delNode->GetRightChild()->SetLeftChild(delNode->GetLeftChild());
+				if (delNode != root)
+				{
+					if (delNode->GetValue() < delNode->GetParent()->GetValue())
+					{
+						delNode->GetParent()->SetLeftChild(successor);
+					}
+					else
+					{
+						delNode->GetParent()->SetRightChild(successor);
+					}
+				}
+				successor->SetParent(delNode->GetParent());
+				successor->SetLeftChild(delNode->GetLeftChild());
+				delNode->GetLeftChild()->SetParent(successor);
 			}
 			/* Swaps the values of the delNode and succcessor node, 
 			 * and sets the successor node as the node to be deleted */
 			else
 			{
 				SwapValues(delNode, successor);
-				successor->GetParent()->SetLeftChild(nullptr);
+				successor->GetParent()->SetLeftChild(successor->GetRightChild());
+				if (successor->GetRightChild() != nullptr)
+				{
+					successor->GetRightChild()->SetParent(successor->GetParent());
+				}
 				delNode = successor;
 			}
+
+			if (delNode == root)
+			{
+				root = successor;
+			}
 		}
-		// The node has only has a single child
+		// The node has only has a single child (left)
 		else if (delNode->GetLeftChild() != nullptr && delNode->GetRightChild() == nullptr)
 		{
 			// If the node being deleted is the root, set the left child as the new root
@@ -688,6 +701,7 @@ public:
 				delNode->GetLeftChild()->SetParent(delNode->GetParent());
 			}
 		}
+		// The node has only has a single child (right)
 		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() != nullptr)
 		{
 			// If the node being deleted is the root, set the right child as the new root
@@ -734,10 +748,12 @@ public:
 			return;
 		}
 
-		DeleteNodes(root);
-
-		// Gotta prevent those null reference exceptions
-		root = nullptr;
+		BSNode<Type>* delNode = root;
+		while (delNode != nullptr)
+		{
+			Delete(delNode->GetValue(), false);
+			delNode = root;
+		}
 
 		if (verbose)
 		{

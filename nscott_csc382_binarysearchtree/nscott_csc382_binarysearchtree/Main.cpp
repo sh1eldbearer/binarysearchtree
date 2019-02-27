@@ -159,7 +159,7 @@ template <typename Type> void AddNodes(BSTree<Type>* theBST, int nodeCount)
 	runTimer = clock();
 	if (nodeCount > 0)
 	{
-		for (int count = 0; count < nodeCount; count++)
+		for (int count = 1; count <= nodeCount; count++)
 		{
 			theBST->Insert((Type)count, false);
 		}
