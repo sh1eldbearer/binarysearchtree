@@ -2,10 +2,12 @@
 #define BSTREE_H 
 
 #include <iostream>
+#include <fstream>
 
 #include "BSNode.h"
-const int SPACE_COUNT = 5;	// The number of spaces to add between each level of the tree when counting in printing function
 
+const int SPACE_COUNT = 5;	// The number of spaces to add between each level of the tree when counting in printing function
+std::ofstream outputFile ("output.txt", std::ofstream::out);
 	/// <summary>
 	/// 
 	/// </summary>
@@ -16,6 +18,7 @@ template<typename Type> class BSTree
 {
 private:
 	BSNode<Type>* root;	// A pointer to the root (first) node of this tree
+	
 
 	/// <summary>
 	/// Finds the node in the tree (or subtree) containing the minimum (smallest) value.
@@ -60,7 +63,7 @@ private:
 	/// <param name="space">The number of spaces to be inserted before printing the node's 
 	/// value. An call to this function from outside PrintNode should use the SPACE_COUNT 
 	/// global value in this file.</param>
-	void PrintNode(BSNode<Type> *node, int space)
+	void PrintNode(BSNode<Type> *node, int space, bool verbose = false)
 	{
 		// If the current node is null, don't print anything
 		if (node == NULL)
@@ -72,19 +75,27 @@ private:
 		space += SPACE_COUNT;
 
 		// Attempts to print the right child first 
-		PrintNode(node->GetRightChild(), space);
+		PrintNode(node->GetRightChild(), space, verbose);
 
 		// Prints the current node 
-		std::cout << std::endl;
+		outputFile << std::endl;
 		for (int i = SPACE_COUNT; i < space; i++)
 		{
-			std::cout << " ";
+			outputFile << " ";
 		}
-		//std::cout << node->GetValue() << "\n";
-		std::cout << node->GetValue() << " (" << node->GetHeight() << ")\n";
+
+		// Verbose mode will print the height alongside the value
+		if (verbose)
+		{
+			outputFile << node->GetValue() << " (" << node->GetHeight() << ")\n";
+		}
+		else
+		{
+			outputFile << node->GetValue() << "\n";
+		}
 
 		// Attempts to print the left child last 
-		PrintNode(node->GetLeftChild(), space);
+		PrintNode(node->GetLeftChild(), space, verbose);
 	}
 
 	/// <summary>
@@ -139,7 +150,7 @@ private:
 	/// checked.</param>
 	void BalanceTree(BSNode<Type>* nodeToCheck)
 	{
-		BSNode<Type>* currentNode = nodeToCheck->GetParent();
+		BSNode<Type>* currentNode = nodeToCheck->GetParent()->GetParent();
 		int balanceDiff;
 
 		while (currentNode != nullptr)
@@ -251,7 +262,7 @@ private:
 	/// below the node being checked.</returns>
 	int CheckTreeBalance(BSNode<Type>* nodeToCheck)
 	{
-		int leftHeight, rightHeight;
+		int startingHeight = nodeToCheck->GetHeight(), leftHeight, rightHeight;
 
 		// If the node being checked is null, immediately return a zero value
 		if (nodeToCheck == nullptr)
@@ -263,7 +274,7 @@ private:
 			// If there is not a child node, return the height of the node being checked
 			if (nodeToCheck->GetLeftChild() == nullptr)
 			{
-				leftHeight = nodeToCheck->GetHeight();
+				leftHeight = startingHeight;
 			}
 			// Otherwise, return the height of the highest leaf of the tree
 			else
@@ -274,7 +285,7 @@ private:
 			// If there is not a child node, return the height of the node being checked
 			if (nodeToCheck->GetRightChild() == nullptr)
 			{
-				rightHeight = nodeToCheck->GetHeight();
+				rightHeight = startingHeight;
 			}
 			// Otherwise, return the height of the highest leaf of the tree
 			else
@@ -432,8 +443,7 @@ public:
 	{
 		BSNode<Type>* newNode = new BSNode<Type>();
 		BSNode<Type>* nodeToCheck = root;
-		int height = 0;
-
+		
 		// Create a new node
 		while (newNode->GetValue() == NULL)
 		{
@@ -447,17 +457,13 @@ public:
 					root = newNode;
 				}
 				// If the tree does have a root node, assigns this node as a child of its parent node
-				else
+				else if (newValue > newNode->GetParent()->GetValue())
 				{
-					if (newValue > newNode->GetParent()->GetValue())
-					{
-						newNode->GetParent()->SetRightChild(newNode);
-					}
-					else if (newValue < newNode->GetParent()->GetValue())
-					{
-						newNode->GetParent()->SetLeftChild(newNode);
-					}
-
+					newNode->GetParent()->SetRightChild(newNode);
+				}
+				else if (newValue < newNode->GetParent()->GetValue())
+				{
+					newNode->GetParent()->SetLeftChild(newNode);
 				}
 
 				// Suppresses console output is verbose is false
@@ -492,14 +498,12 @@ public:
 			{
 				newNode->SetParent(nodeToCheck);
 				nodeToCheck = nodeToCheck->GetLeftChild();
-				height++;
 			}
 			// Larger values get inserted further down the right branch
 			else if (newValue > nodeToCheck->GetValue())
 			{
 				newNode->SetParent(nodeToCheck);
 				nodeToCheck = nodeToCheck->GetRightChild();
-				height++;
 			}
 			// Unexpected behavior (if this ever shows up in the console window, I screwed up)
 			else
@@ -654,20 +658,40 @@ public:
 			// The node being deleted has no left subtree - bring the right child up one level
 			if (successor == delNode->GetRightChild())
 			{
-				delNode->GetParent()->SetRightChild(delNode->GetRightChild());
-				delNode->GetRightChild()->SetParent(delNode->GetParent());
-				delNode->GetRightChild()->SetLeftChild(delNode->GetLeftChild());
+				if (delNode != root)
+				{
+					if (delNode->GetValue() < delNode->GetParent()->GetValue())
+					{
+						delNode->GetParent()->SetLeftChild(successor);
+					}
+					else
+					{
+						delNode->GetParent()->SetRightChild(successor);
+					}
+				}
+				successor->SetParent(delNode->GetParent());
+				successor->SetLeftChild(delNode->GetLeftChild());
+				delNode->GetLeftChild()->SetParent(successor);
 			}
 			/* Swaps the values of the delNode and succcessor node, 
 			 * and sets the successor node as the node to be deleted */
 			else
 			{
 				SwapValues(delNode, successor);
-				successor->GetParent()->SetLeftChild(nullptr);
+				successor->GetParent()->SetLeftChild(successor->GetRightChild());
+				if (successor->GetRightChild() != nullptr)
+				{
+					successor->GetRightChild()->SetParent(successor->GetParent());
+				}
 				delNode = successor;
 			}
+
+			if (delNode == root)
+			{
+				root = successor;
+			}
 		}
-		// The node has only has a single child
+		// The node has only has a single child (left)
 		else if (delNode->GetLeftChild() != nullptr && delNode->GetRightChild() == nullptr)
 		{
 			// If the node being deleted is the root, set the left child as the new root
@@ -688,6 +712,7 @@ public:
 				delNode->GetLeftChild()->SetParent(delNode->GetParent());
 			}
 		}
+		// The node has only has a single child (right)
 		else if (delNode->GetLeftChild() == nullptr && delNode->GetRightChild() != nullptr)
 		{
 			// If the node being deleted is the root, set the right child as the new root
@@ -734,10 +759,12 @@ public:
 			return;
 		}
 
-		DeleteNodes(root);
-
-		// Gotta prevent those null reference exceptions
-		root = nullptr;
+		BSNode<Type>* delNode = root;
+		while (delNode != nullptr)
+		{
+			Delete(delNode->GetValue(), false);
+			delNode = root;
+		}
 
 		if (verbose)
 		{
@@ -750,15 +777,22 @@ public:
 	/// </summary>
 	void Print() 
 	{
+
 		// If the tree is empty, display an error message and exit the function
 		if (IsEmpty(true))
 		{
 			return;
 		}
 
+		outputFile.open("output.txt");
+		outputFile.clear();
+		
 		// Print the contents of the tree
-		PrintNode(root, 0);
-		std::cout << "\n";
+		PrintNode(root, 0, true);
+
+		outputFile.close();
+
+		std::cout << "Tree contents printed to output.txt.\n\n";
 	}
 };
 
