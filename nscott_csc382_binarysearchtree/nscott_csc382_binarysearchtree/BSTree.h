@@ -8,11 +8,6 @@
 
 const int SPACE_COUNT = 5;	// The number of spaces to add between each level of the tree when counting in printing function
 std::ofstream outputFile ("output.txt", std::ofstream::out);
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="newValue"></param>
-	/// <returns></returns>
 
 template<typename Type> class BSTree
 {
